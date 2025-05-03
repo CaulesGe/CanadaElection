@@ -29,6 +29,11 @@ export default class ElectionMap {
       };
       vis.projection = d3.geoTransform({ point: projectPoint });
       vis.path       = d3.geoPath().projection(vis.projection);
+      
+      // create tooltip
+      vis.tooltip = d3.select("body").append('div')
+            .attr('class', "tooltip")
+            .attr('id', 'barTooltip')
   
       /* 4 ▸ load the GeoJSON and draw once, then redraw after every zoom */
       d3.json('data/riding.geojson').then(geo => {
@@ -45,6 +50,7 @@ export default class ElectionMap {
           .attr('fill-opacity', 0.5)
           .attr('stroke','#666')
           .attr('stroke-width', 0.4)
+      
 
         vis.updateVis(); // draw the map for the first time
         vis.map.on('zoomend moveend', () => vis.updateVis()); // redraw on every move
@@ -82,9 +88,20 @@ export default class ElectionMap {
             .transition()
             .duration(200)
             .attr('fill', '#ff9e40')
-            .attr('fill-opacity', 1);
+            .attr('fill-opacity', 0.6);
+
+          // tooltip
+          vis.tooltip.style('display', 'block')
+                .style('left', e.pageX + 10 + 'px')
+                .style('top', e.pageY - 15 + 'px')
+                .html(`
+                    <div style="border: thin solid grey; border-radius: 5px; background: white; padding: 20px">
+                        <h4 style="margin: 0; padding: 0; font-size: 1.2em;">${d.properties.fed_name_en}</h4>
+                    </div>
+                    `).transition().duration(350).style('opacity', 1);
         })
         .on('mouseout', function () {
+          vis.tooltip.style('display', 'none');
           d3.select(this)
             .transition()
             .duration(200)

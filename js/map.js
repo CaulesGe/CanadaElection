@@ -1,15 +1,20 @@
 /*  ElectionMap.js  */
+import detail from './detail.js';
+
 export default class ElectionMap {
     constructor(parentElement, electionData) {
       this.parentElement= parentElement;
       this.electionData = electionData;
-      this.ridingColor = {
+      this.partyColor = {
         conservative: "#1A4782",
         liberal: "#D71920",
         NDP: "#F37021",
         Green: "#3D9B35",
         Bloc: "#009EE0"
       }
+
+      this.detailPage = new detail("detail");
+      this.selectedRiding = null;
       this.initVis();
     }
   
@@ -54,13 +59,10 @@ export default class ElectionMap {
           .append('path')
           .attr('class', 'leaflet-interactive')   // ← **crucial** for pointer events
           .attr("d", vis.path)
-          .attr('fill',  '#d3d3d3')
-          .attr('fill-opacity', 0.5)
+          //.attr('fill',  '#d3d3d3')
           .attr('stroke','#666')
           .attr('stroke-width', 0.4)
       
-
-        vis.updateVis(); // draw the map for the first time
         vis.map.on('zoomend moveend', () => vis.updateVis()); // redraw on every move
         vis.wrangleData();
       });
@@ -84,38 +86,47 @@ export default class ElectionMap {
       
       // Update path data (recalculate position)
       vis.ridings.attr('d', vis.path);
+
+      //color the map by winning party
+      
+      vis.ridings.attr('fill', (d) => {
+        const code = d.properties["fed_code"];
+        const selectedRidingCandidates = vis.candidatesByRiding.find(d => d.key == code);
+        let winningParty = selectedRidingCandidates.value[0]["Candidate/Candidat"]
+        
+        if (winningParty.includes("Liberal")) {
+          return vis.partyColor.liberal;
+        } else if (winningParty.includes("Conservative")) {
+            return vis.partyColor.conservative;
+        } else if (winningParty.includes("NDP")){
+            return vis.partyColor.NDP;
+        } else if (winningParty.includes("Bloc")) {
+            return vis.partyColor.Bloc;
+        }
+      }).attr('fill-opacity', (d) => {
+        if (vis.selectedRiding && vis.selectedRiding === d) return 1;
+        const code = d.properties["fed_code"];
+        const selectedRidingCandidates = vis.candidatesByRiding.find(d => d.key == code);
+        let percentageOfVote = selectedRidingCandidates.value[0]["Percentage of Votes Obtained /Pourcentage des votes obtenus"];
+              return percentageOfVote / 100;
+      }).attr('stroke-width', d => vis.selectedRiding === d ? 2.5 : 0.4) // Thicker border for selected
+      .attr('stroke', d => vis.selectedRiding === d ? '#000' : '#666');
+    
+
+      
   
       // (Re)bind event listeners
-      vis.ridings
-        .on('mouseover', function (e, d) {
+      vis.ridings.on('mouseover', function (e, d) {
+          if (vis.selectedRiding) return; // Skip hover if something is selected
+
           this.parentNode.appendChild(this); // Bring to front
 
           const code = d.properties["fed_code"];
           const selectedRidingCandidates = vis.candidatesByRiding.find(d => d.key == code);
-          vis.showDetail(d, selectedRidingCandidates); // detailed page
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr('fill', () => {
-              console.log(selectedRidingCandidates)
-              let winningParty = selectedRidingCandidates.value[0]["Candidate/Candidat"]
-             
-              console.log(winningParty);
-
-              if (winningParty.includes("Liberal")) {
-                return vis.ridingColor.liberal;
-              } else if (winningParty.includes("Conservative")) {
-                return vis.ridingColor.conservative;
-              } else if (winningParty.includes("NDP")){
-                return vis.ridingColor.NDP;
-              } else if (winningParty.includes("Bloc")) {
-                return vis.ridingColor.Bloc;
-              }
-            })   
-            .attr('fill-opacity', () => {
-              let percentageOfVote = selectedRidingCandidates.value[0]["Percentage of Votes Obtained /Pourcentage des votes obtenus"];
-              return percentageOfVote / 100;
-            });
+         
+          vis.detailPage.render(d, selectedRidingCandidates); // detailed page
+          d3.select(this).transition().duration(350).
+            attr('fill-opacity', 1);
 
           // tooltip
           vis.tooltip.style('display', 'block')
@@ -129,38 +140,65 @@ export default class ElectionMap {
         })
         .on('mouseout', function () {
           vis.tooltip.style('display', 'none');
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr('fill', '#d3d3d3')
-            .attr('fill-opacity', 0.5);
+          if (vis.selectedRiding) return; // Skip hover if something is selected
+          d3.select(this).transition().duration(350).
+          attr('fill-opacity', (d) => {
+              const code = d.properties["fed_code"];
+              const selectedRidingCandidates = vis.candidatesByRiding.find(d => d.key == code);
+              let percentageOfVote = selectedRidingCandidates.value[0]["Percentage of Votes Obtained /Pourcentage des votes obtenus"];
+                    return percentageOfVote / 100;
+            })
+        }).on('click', function (e, d) {
+            if (vis.selectedRiding === d) {
+              vis.selectedRiding = null;
+              vis.tooltip.style('display', 'none');
+            
+              vis.updateVis(); // Reset fill-opacity
+              return;
+            }
+
+            // Reset the previous selected riding
+            if (vis.selectedRiding) {
+                // Get previous riding's code
+                const prevCode = vis.selectedRiding.properties["fed_code"];
+                // Reset fill-opacity for previously selected riding
+                vis.g.selectAll('path').filter(function (prevD) {
+                    return prevD.properties["fed_code"] === prevCode;
+                }).transition().duration(350)
+                  .attr('fill-opacity', function (prevD) {
+                      const selectedRidingCandidates = vis.candidatesByRiding.find(d => d.key == prevD.properties["fed_code"]);
+                      let percentageOfVote = selectedRidingCandidates.value[0]["Percentage of Votes Obtained /Pourcentage des votes obtenus"];
+                      return percentageOfVote / 100;
+                  })
+                  .attr('stroke-width', 0.4)  // Reset border width
+                  .attr('stroke', '#666');  // Reset border color
+            }
+
+            vis.selectedRiding = d;
+
+            const code = d.properties["fed_code"];
+            const selectedRidingCandidates = vis.candidatesByRiding.find(d => d.key == code);
+
+            vis.detailPage.render(d, selectedRidingCandidates); // render detail page
+
+            d3.select(this)
+                .transition()
+                .duration(350)
+                .attr('fill-opacity', 1);
+
+            vis.tooltip.style('display', 'block')
+                .style('left', e.pageX + 10 + 'px')
+                .style('top', e.pageY - 15 + 'px')
+                .html(`
+                    <div style="border: thin solid grey; border-radius: 5px; background: white; padding: 20px">
+                        <h4 style="margin: 0; padding: 0; font-size: 1.2em;">${d.properties.fed_name_en}</h4>
+                    </div>
+                `)
+                .transition()
+                .duration(350)
+                .style('opacity', 1);
         });
   }
-
-  showDetail(d, selectedRidingCandidates) {
-  
-    const ridings = d.properties;
-    //console.log(ridings);
-    const name = ridings.fed_name_en;
-    const province = ridings.prov_name_en;
-    
-
-    d3.select("#province").style("opacity", 1).html(province);
-  
-    d3.select("#ridingName")
-      .style("opacity", 1)
-      .html(name)
-
-    // search for corresponding data
-    
-    //console.log(selectedRidingCandidates);
-
-    // clear old data
-    d3.select("#detail").selectAll("p").remove();
-    
-    d3.select("#detail").selectAll("p").data(selectedRidingCandidates.value).enter().append("p").text(d => `${d["Candidate/Candidat"]}: ${d["Percentage of Votes Obtained /Pourcentage des votes obtenus"]}%`);
-  }
-
 
 }
   

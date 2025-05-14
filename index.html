@@ -11,19 +11,32 @@
 </head>
 <body>
     <div class="container-fluid">
+        <h1 class="title">Canada Election 2021</h1>
+        <p class="title">Click on the map to select a region.</p>
         <div class="row">
-            <div class="col-12 col-md-8">
-                <h1>Canada Election 2021</h1>
-                <p>Click on the map to select a region.</p>
+            <div class="col-12 col-md-8">  
+                
                 <div id="map"></div>
             </div>
             <div id="detail" class="col-12 col-md-4">
-                <h2>Selected Region</h2>
-                <label for="province">Province:</label>
-                <h3 id="province"></h3>
-                <label for="ridingName">Riding Name:</label>
-                <h3 id="ridingName"></h3>
+                <h4 id="province"></h4>
+                <h4 id="ridingName"></h4>
             </div>
+        </div>
+        <h2 class="title">Riding Results</h2>
+        <div id="ridingDetailContainer">
+            <table id="ridingDetailTable">
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Party</th>
+                        <th>Vote %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be inserted dynamically -->
+                </tbody>
+            </table>
         </div>
 </body>
 

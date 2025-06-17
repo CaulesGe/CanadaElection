@@ -2,6 +2,15 @@
   text-align: center;
 }
 
+#overview {
+  text-align: center;
+  margin-bottom: 200px;
+}
+
+#moreDetailsButton {
+    text-align: center;
+}
+
 #map {
 	width: 100%;
 	height: 600px;
@@ -33,3 +42,4 @@
 #ridingDetailTable tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+

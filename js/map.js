@@ -1,5 +1,5 @@
 /*  ElectionMap.js  */
-import detail from './detail.js';
+import ridingDetail from './ridingDetail.js';
 
 export default class ElectionMap {
     constructor(parentElement, electionData) {
@@ -13,7 +13,7 @@ export default class ElectionMap {
         Bloc: "#009EE0"
       }
 
-      this.detailPage = new detail("detail");
+      this.detailPage = new ridingDetail("detail");
       this.selectedRiding = null;
       this.initVis();
     }

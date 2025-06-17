@@ -12,10 +12,31 @@
 <body>
     <div class="container-fluid">
         <h1 class="title">Canada Election 2021</h1>
-        <p class="title">Click on the map to select a region.</p>
+        <div id="overview">   
+            <h2 class="description">Overview of the election results.</h2>
+            <select id="regionSelector">
+                <option value="Total">Canada (Total)</option>
+                <option value="N.L.">Newfoundland and Labrador</option>
+                <option value="P.E.I.">Prince Edward Island</option>
+                <option value="N.S.">Nova Scotia</option>
+                <option value="N.B.">New Brunswick</option>
+                <option value="Que.">Quebec</option>
+                <option value="Ont.">Ontario</option>
+                <option value="Man.">Manitoba</option>
+                <option value="Sask.">Saskatchewan</option>
+                <option value="Alta.">Alberta</option>
+                <option value="B.C.">British Columbia</option>
+                <option value="Y.T.">Yukon</option>
+                <option value="N.W.T.">Northwest Territories</option>
+                <option value="Nun.">Nunavut</option>
+            </select>
+            <div id="overview-chart"></div>
+            <button id="moreDetailsButton">More Details</button>
+        </div>
+        
         <div class="row">
             <div class="col-12 col-md-8">  
-                
+                <p class="title">Click on the map to select a region.</p>
                 <div id="map"></div>
             </div>
             <div id="detail" class="col-12 col-md-4">
@@ -31,6 +52,7 @@
                         <th>Candidate</th>
                         <th>Party</th>
                         <th>Vote %</th>
+                        <th>Votes</th>
                     </tr>
                 </thead>
                 <tbody>

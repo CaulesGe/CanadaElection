@@ -176,10 +176,19 @@ export default class ElectionMap {
 
             vis.selectedRiding = d;
 
+
             const code = d.properties["fed_code"];
             const selectedRidingCandidates = vis.candidatesByRiding.find(d => d.key == code);
 
             vis.detailPage.render(d, selectedRidingCandidates); // render detail page
+
+            // Center the map on clicked riding
+            // const centroid = vis.path.centroid(d);
+            // const point = vis.map.layerPointToLatLng(L.point(...centroid));
+            // vis.map.flyTo(point, Math.max(vis.map.getZoom(), 5), {
+            //     animate: true,
+            //     duration: 1
+            // });
 
             d3.select(this)
                 .transition()

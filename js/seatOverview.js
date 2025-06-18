@@ -135,21 +135,22 @@ export default class SeatOverview {
             .attr("class", "y-axis")
             .call(d3.axisLeft(vis.y).ticks(5));
 
-        // create new bars
         let bars = vis.g.selectAll(".bar")
-            .data(sortedData)
-            .enter()
+            .data(sortedData, d => d[0]); // use key function to bind data correctly
+
+        // ENTER
+        bars.enter()
             .append("rect")
             .attr("class", "bar")
             .attr("x", 0)
             .attr("y", d => vis.y(d[0]))
-            .attr("width", d => vis.x(d[1]))
             .attr("height", vis.y.bandwidth())
-            .attr("fill", d => vis.getPartyColor(d[0]));
+            .attr("width", 0) // start width at 0
+            .attr("fill", d => vis.getPartyColor(d[0]))
+            .transition().duration(500)
+            .attr("width", d => vis.x(d[1]));
 
-        bars.transition()
-            .duration(500);
-
+        // EXIT
         bars.exit().remove();
 
         // add labels

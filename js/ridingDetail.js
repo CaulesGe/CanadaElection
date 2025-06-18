@@ -71,7 +71,7 @@ export default class RidingDetail {
 
         // draw bar chart
         const dataArr = selectedRidingCandidates.value.filter((d, i) => i < 5);     //filter only top 5 parties
-        console.log(dataArr);
+        //console.log(dataArr);
        // console.log(dataArr);
         vis.x.domain(dataArr.map(d => d["Candidate/Candidat"]));
         vis.y.domain([0, d3.max(dataArr, d => +d["Percentage of Votes Obtained /Pourcentage des votes obtenus"])])

@@ -1,0 +1,26 @@
+.tooltip {
+  position: absolute;
+  display: none;
+  background-color: white;
+  border: 1px solid #888;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 0.9em;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Fix interaction for Leaflet + D3 overlay */
+.leaflet-overlay-pane svg {
+  pointer-events: auto;
+}
+
+.leaflet-overlay-pane svg g {
+  pointer-events: none;
+}
+
+.leaflet-interactive {
+  pointer-events: auto;
+}

@@ -2,8 +2,8 @@ import ElectionMap from './map.js';
 import VoteOverview from './voteOverview.js';
 import SeatOverview from './seatOverview.js';
 
-Promise.all([d3.json('data/2021result.json'), d3.json('data/percentageOfVoteByRegion.json'), d3.json('data/numberOfVoteByRegion.json'),
-    d3.json('data/resultByDistrict.json')
+Promise.all([d3.json('data/CA2021/2021result.json'), d3.json('data/CA2021/percentageOfVoteByRegion.json'), d3.json('data/CA2021/numberOfVoteByRegion.json'),
+    d3.json('data/CA2021/resultByDistrict.json')
 ])
 .then(([ridingResult, percentageOfVoteByRegion, numberOfVoteByRegion, resultByDistrict]) => {
     let map = new ElectionMap('map', ridingResult);

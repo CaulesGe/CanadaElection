@@ -49,7 +49,7 @@ export default class ElectionMap {
             .attr('id', 'barTooltip')
   
       /* 4 ▸ load the GeoJSON and draw once, then redraw after every zoom */
-      d3.json('data/riding.geojson').then(geo => {
+      d3.json('data/CA2021/riding.geojson').then(geo => {
         vis.features = geo.features;
   
         vis.ridings = vis.g

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ElectionMap from './components/ElectionMap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 import * as d3 from 'd3';
 
 function App() {

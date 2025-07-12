@@ -6,12 +6,15 @@ import './ElectionMap.css';
 
 
 
-const ElectionMap = ({ electionData }) => {
+const ElectionMap = ({ electionData, setSelectedRiding, setSelectedCandidates }) => {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const d3LayerRef = useRef({});
   const tooltipRef = useRef(null);
   const selectedRidingRef = useRef(null);
+
+  // for ridingDetails
+
 
   useEffect(() => {
     if (!mapContainerRef.current || !electionData || !electionData.length || mapInstanceRef.current) return;
@@ -94,15 +97,21 @@ const ElectionMap = ({ electionData }) => {
         // Initial hover and click events
       ridings.on('mouseover', function (event, d) {
         if (selectedRidingRef.current) return; // Skip hover if something is selected
+
+        // pass data to ridingDetails
+        const selectedRidingCandidates = candidatesByRiding.find(r => r.key == d.properties["fed_code"]);
+        setSelectedRiding(d);
+        setSelectedCandidates(selectedRidingCandidates?.value || []);
         
         d3.select(this).attr('fill-opacity', 1);
         const tooltip = tooltipRef.current;
         tooltip.style("display", "block")
+          .style("opacity", 0) // set base opacity first
           .style("left", `${event.pageX + 10}px`)
           .style("top", `${event.pageY - 15}px`)
           .html(`
-            <div style="border: thin solid grey; border-radius: 5px; background: white; padding: 20px">
-              <h4 style="margin: 0; font-size: 1.2em;">${d.properties.fed_name_en}</h4>
+            <div>
+              ${d.properties.fed_name_en}
             </div>
           `)
           .transition()
@@ -117,18 +126,24 @@ const ElectionMap = ({ electionData }) => {
           return selected.value[0]["Percentage of Votes Obtained /Pourcentage des votes obtenus"] / 100;
         });
         const tooltip = tooltipRef.current;
-        tooltip.transition().duration(200).style("opacity", 0);
+        tooltip
+          .transition()
+          .duration(200)
+          .style("opacity", 0)
+          .on("end", () => tooltip.style("display", "none"));
+
       }).on('click', function (event, d) {
         // Deselect if clicked again
-        if (selectedRidingRef.current === d) {
-            selectedRidingRef.current = null;
+        if (selectedRidingRef.current === d) { //if current one is already selected
+            selectedRidingRef.current = null; //reset it
             d3.select(this).transition().duration(300).attr('fill-opacity', () => {
                 const code = d.properties["fed_code"];
                 const selected = candidatesByRiding.find(d => d.key == code);
                 return selected.value[0]["Percentage of Votes Obtained /Pourcentage des votes obtenus"] / 100;
-            })
-            .attr('stroke-width', 0.4)
-            .attr('stroke', '#666');
+            });
+            // .attr('stroke', '#666')
+            // .attr('stroke-width', 0.4);
+            
             const tooltip = tooltipRef.current;
             tooltip.style('display', 'none');
             return;
@@ -136,20 +151,20 @@ const ElectionMap = ({ electionData }) => {
 
         // Reset previous
         if (selectedRidingRef.current) {
-            const prevCode = selectedRidingRef.current.properties["fed_code"];
-            g.selectAll('path')
-            .filter(function (prevD) {
-                return prevD.properties["fed_code"] === prevCode;
-            })
-            .transition().duration(350)
-            .attr('fill-opacity', function (prevD) {
-                const selectedRidingCandidates = candidatesByRiding.find(d => d.key == prevD.properties["fed_code"]);
-                let percentageOfVote = selectedRidingCandidates.value[0]["Percentage of Votes Obtained /Pourcentage des votes obtenus"];
-                return percentageOfVote / 100;
-            })
-            .attr('stroke-width', 0.4)
-            .attr('stroke', '#666');
-        }
+          const prevCode = selectedRidingRef.current.properties["fed_code"];
+          g.selectAll('path')
+          .filter(function (prevD) {
+              return prevD.properties["fed_code"] === prevCode;
+          })
+          .transition().duration(350)
+          .attr('fill-opacity', function (prevD) {
+              const selectedRidingCandidates = candidatesByRiding.find(d => d.key == prevD.properties["fed_code"]);
+              let percentageOfVote = selectedRidingCandidates.value[0]["Percentage of Votes Obtained /Pourcentage des votes obtenus"];
+              return percentageOfVote / 100;
+          });
+          // .attr('stroke', '#666')
+          // .attr('stroke-width', 0.4);
+      }
 
         selectedRidingRef.current = d;
 
@@ -157,9 +172,9 @@ const ElectionMap = ({ electionData }) => {
         d3.select(this)
             .transition()
             .duration(350)
-            .attr('fill-opacity', 1)
-            .attr('stroke-width', 2.5)
-            .attr('stroke', '#000');
+            .attr('fill-opacity', 1);
+            // .attr('stroke-width', 2.5)
+            // .attr('stroke', '#666');
 
         // Update tooltip
         const tooltip = tooltipRef.current;
@@ -167,19 +182,21 @@ const ElectionMap = ({ electionData }) => {
             .style('left', event.pageX + 10 + 'px')
             .style('top', event.pageY - 15 + 'px')
             .html(`
-            <div style="border: thin solid grey; border-radius: 5px; background: white; padding: 20px">
-                <h4 style="margin: 0; padding: 0; font-size: 1.2em;">${d.properties.fed_name_en}</h4>
+            <div>
+                ${d.properties.fed_name_en}
             </div>
             `)
             .transition()
             .duration(350)
             .style('opacity', 1);
+        
+        // pass data to ridingDetails
+        const selectedRidingCandidates = candidatesByRiding.find(r => r.key == d.properties["fed_code"]);
+        setSelectedRiding(d);
+        setSelectedCandidates(selectedRidingCandidates?.value || []);
 
     });
   });
-
-    
-
 
     // Clean up on unmount
     return () => {
@@ -192,7 +209,7 @@ const ElectionMap = ({ electionData }) => {
         tooltipRef.current = null;
       }
     };
-  }, [electionData]);
+  }, [electionData, setSelectedCandidates, setSelectedRiding]);
 
   return (
     <div id="map" ref={mapContainerRef} style={{ height: '600px', width: '100%' }} />

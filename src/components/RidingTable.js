@@ -1,0 +1,51 @@
+import React, { useEffect, useRef } from "react";
+import * as d3 from "d3";
+import './RidingTable.css';
+
+function getPartyName(candidateData) {
+    if (candidateData.includes("Liberal")) return "LIB";
+    if (candidateData.includes("Conservative")) return "CON";
+    if (candidateData.includes("NDP")) return "NDP";
+    if (candidateData.includes("Bloc")) return "BLOC";
+    if (candidateData.includes("Green")) return "GREEN";
+    if (candidateData.includes("People's Party")) return "PPC";
+    if (candidateData.includes("Independent")) return "IND";
+    return candidateData;
+}
+
+export const RidingTable = ({candidates}) => {
+    const tableRef = useRef();
+
+    useEffect(() => {
+        // Render detail table
+        const tbody = d3.select(tableRef.current).select("tbody");
+        tbody.selectAll("tr").remove();
+    
+        tbody.selectAll("tr")
+          .data(candidates)
+          .enter()
+          .append("tr")
+          .html(d => `
+            <td>${d["Candidate/Candidat"]}</td>
+            <td>${getPartyName(d["Candidate/Candidat"])}</td>
+            <td>${d["Percentage of Votes Obtained /Pourcentage des votes obtenus"]}%</td>
+            <td>${d["Votes Obtained/Votes obtenus"]}</td>
+          `);
+    }, [candidates]);
+    
+
+    return (
+    <div>
+        <table ref={tableRef} className="table table-bordered table-sm mt-4" id="ridingDetailTable">
+            <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Party</th>
+                    <th>Vote %</th>
+                    <th>Votes</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+      </table>
+    </div>);
+}

@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import ElectionMap from './components/ElectionMap';
+import RidingBarChart from './components/RidingBarChart';
+import { RidingTable } from './components/RidingTable';
+import { RegionSeatBarChart } from './components/RegionSeatBarChart';
+import { RegionVoteBarChart } from './components/RegionVoteBarChart';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import * as d3 from 'd3';
 
 function App() {
-  const [data, setData] = useState([]);
+  const [resultByRiding, setResultByRiding] = useState([]);
+  const [resultByRegion, setResultByRegion] = useState([]);
+  const [percentageOfVoteByRegion, setPercentageOfVoteByRegion] = useState([]);
+  const [numberOfVoteByRegion, setNumberOfVoteByRegion] = useState([]);
+  const [selectedRiding, setSelectedRiding] = useState(null);
+  const [selectedCandidates, setSelectedCandidates] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState(["Total"]);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    d3.json(process.env.PUBLIC_URL + '/data/CA2021/2021result.json').then(setData);
+    d3.json(process.env.PUBLIC_URL + '/data/CA2021/2021result.json').then(setResultByRiding);
+    d3.json(process.env.PUBLIC_URL + '/data/CA2021/resultByDistrict.json').then(setResultByRegion);
+    d3.json(process.env.PUBLIC_URL + '/data/CA2021/percentageOfVoteByRegion.json').then(setPercentageOfVoteByRegion);
+    d3.json(process.env.PUBLIC_URL + '/data/CA2021/numberOfVoteByRegion.json').then(setNumberOfVoteByRegion);
   }, []);
+
+  console.log(resultByRegion);
 
   return (
     <div className="App">
@@ -18,7 +34,7 @@ function App() {
           <h1 className="title">Canada Election 2021</h1>
           <div id="overview">   
             <h2 className="description">Overview of the election results.</h2>
-            <select id="regionSelector">
+            <select id="regionSelector" onChange={(e) => setSelectedRegion(e.target.value)}>
               <option value="Total">Canada (Total)</option>
               <option value="N.L.">Newfoundland and Labrador</option>
               <option value="P.E.I.">Prince Edward Island</option>
@@ -34,35 +50,44 @@ function App() {
               <option value="N.W.T.">Northwest Territories</option>
               <option value="Nun.">Nunavut</option>
             </select>
-            <div id="overview-chart"></div>
-            <button id="moreDetailsButton">More Details</button>
+            <div id="overview-chart">
+              <RegionSeatBarChart
+                selectedRegion={selectedRegion}
+                resultByDistrict={resultByRegion}
+              />
+              <RegionVoteBarChart
+                selectedRegion={selectedRegion}
+                percentageOfVoteByRegion={percentageOfVoteByRegion}
+                numberOfVoteByRegion={numberOfVoteByRegion}
+              />
+            </div>
+            <button onClick={() => setShowDetails(true)} style={{ marginTop: "20px" }}>
+              More Details
+            </button>
           </div>
           <input type="text" id="ridingSearch" placeholder="Search by riding name or number..." />
           <div className="row" id='mapContainer'>
             <div className="col-12 col-md-8">  
               <p className="title">Click on the map to select a region.</p>
-              <ElectionMap electionData={data} />       
+              <ElectionMap 
+                electionData={resultByRiding} 
+                setSelectedRiding={setSelectedRiding} 
+                setSelectedCandidates={setSelectedCandidates}
+              />
+       
             </div>
             <div id="detail" className="col-12 col-md-4">
-              <h4 id="province">Province Name</h4>
-              <h4 id="ridingName">Riding Name</h4>
+              <RidingBarChart
+                riding={selectedRiding}
+                candidates={selectedCandidates}
+            />
             </div>
           </div>
           <h2 className="title">Riding Results</h2>
           <div id="ridingDetailContainer">
-            <table id="ridingDetailTable">
-              <thead>
-                <tr>
-                  <th>Candidate</th>
-                  <th>Party</th>
-                  <th>Vote %</th>
-                  <th>Votes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Rows will be inserted dynamically */}
-              </tbody>
-            </table>
+            <RidingTable 
+              candidates={selectedCandidates}
+            />
           </div>
         </div>
       </header>

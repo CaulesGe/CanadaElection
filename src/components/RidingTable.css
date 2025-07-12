@@ -1,0 +1,22 @@
+#ridingDetailTable {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+#ridingDetailTable th,
+#ridingDetailTable td {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+}
+
+#ridingDetailTable th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+#ridingDetailTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+

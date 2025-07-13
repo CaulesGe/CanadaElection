@@ -1,17 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-const provinces = ["Newfoundland and Labrador/Terre-Neuve-et-Labrador", "Prince Edward Island/Île-du-Prince-Édouard", 
-        "Nova Scotia/Nouvelle-Écosse", "New Brunswick/Nouveau-Brunswick", "Quebec/Québec", "Ontario",
-        "Manitoba", "Saskatchewan", "Alberta", "British Columbia/Colombie-Britannique",
-        "Yukon", "Northwest Territories/Territoires du Nord-Ouest", "Nunavut", "Total"
-];
-
-const provinceNameTable = {"Total": "Total", "N.L.": "Newfoundland and Labrador/Terre-Neuve-et-Labrador", "P.E.I.": "Prince Edward Island/Île-du-Prince-Édouard",
-    "N.S.": "Nova Scotia/Nouvelle-Écosse", "N.B.": "New Brunswick/Nouveau-Brunswick", "Que.": "Quebec/Québec", "Ont.": "Ontario",
-    "Man.": "Manitoba", "Sask.": "Saskatchewan", "Alta.": "Alberta", "B.C.": "British Columbia/Colombie-Britannique",
-    "Y.T.": "Yukon", "N.W.T.": "Northwest Territories/Territoires du Nord-Ouest", "Nun.": "Nunavut"};
-
 const margin = { top: 70, right: 20, bottom: 200, left: 120 };
 const width = 500 - margin.left - margin.right;
 const height = 600 - margin.top - margin.bottom;
@@ -27,67 +16,16 @@ function getPartyColor(candidateData) {
     return "#808080";
 }
 
-export const RegionSeatBarChart = ({selectedRegion, resultByDistrict}) => {
+export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selectedRegion}) => {
     const svgRef = useRef();
-    //calculate all data
-    const { seatsByRegion, fixedYDomain } = React.useMemo(() => {
-        let seatsByRegion = {};
-        provinces.forEach(province => {
-            seatsByRegion[province] = {
-                Total: 0,
-                Conservative: 0,
-                Liberal: 0,
-                NDP: 0,
-                Bloc: 0,
-                Green: 0,
-                PPC: 0,
-                Independent: 0
-            };
-        });
-    
-        resultByDistrict.forEach(district => {
-            let province = district.Province;
-            if (district["Elected Candidate/Candidat élu"].includes("Conservative")) {
-                seatsByRegion[province].Conservative++;
-                seatsByRegion["Total"].Conservative++;
-            } else if (district["Elected Candidate/Candidat élu"].includes("Liberal")) {
-                seatsByRegion[province].Liberal++;
-                seatsByRegion["Total"].Liberal++;
-            } else if (district["Elected Candidate/Candidat élu"].includes("NDP")) {
-                seatsByRegion[province].NDP++;
-                seatsByRegion["Total"].NDP++;
-            } else if (district["Elected Candidate/Candidat élu"].includes("Bloc")) {
-                seatsByRegion[province].Bloc++;
-                seatsByRegion["Total"].Bloc++;
-            } else if (district["Elected Candidate/Candidat élu"].includes("Green")) {
-                seatsByRegion[province].Green++;
-                seatsByRegion["Total"].Green++;
-            } else if (district["Elected Candidate/Candidat élu"].includes("PPC")) {
-                seatsByRegion[province].PPC++;
-                seatsByRegion["Total"].PPC++;
-            } else if (district["Elected Candidate/Candidat élu"].includes("Independent")) {
-                seatsByRegion[province].Independent++;
-                seatsByRegion["Total"].Independent++;
-            }
-            seatsByRegion[province].Total++;
-            seatsByRegion["Total"].Total++;
-        });
-    
-        let fixedYDomain = Object.entries(seatsByRegion["Total"])
-            .filter(([party, count]) => party !== "Total" && count > 0)
-            .map(([party]) => party);
-    
-        return { seatsByRegion, fixedYDomain };
-    }, [resultByDistrict]);
-
 
     useEffect(() => {    
-        renderRegionBarChart(svgRef, seatsByRegion, fixedYDomain, selectedRegion);
-    }, [selectedRegion, resultByDistrict, fixedYDomain, seatsByRegion])
+        renderRegionBarChart(svgRef, fixedYDomain, selectedRegionSeats, selectedRegion);
+    }, [fixedYDomain, selectedRegionSeats, selectedRegion]);
 
     
-    function renderRegionBarChart(svgRef, seatsByRegion, fixedYDomain, selectedRegion) {
-        let selectedRegionSeats = seatsByRegion[provinceNameTable[selectedRegion]];
+    function renderRegionBarChart(svgRef, fixedYDomain, selectedRegionSeats, selectedRegion) {
+        //let selectedRegionSeats = seatsByRegion[provinceNameTable[selectedRegion]];
         let sortedSelectedRegionSeats = fixedYDomain.map(party => {
             return [party, selectedRegionSeats[party] || 0];
         }).sort((a, b) => b[1] - a[1]);  // Sort descending by seats in region

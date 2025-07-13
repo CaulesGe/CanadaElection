@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import ElectionMap from './components/ElectionMap';
-import RidingBarChart from './components/RidingBarChart';
-import { RidingTable } from './components/RidingTable';
-import { RegionSeatBarChart } from './components/RegionSeatBarChart';
-import { RegionVoteBarChart } from './components/RegionVoteBarChart';
+import ElectionMap from './components/electionMapView/ElectionMap';
+import RidingBarChart from './components/electionMapView/RidingBarChart';
+import { RidingTable } from './components/electionMapView/RidingTable';
+// import { RegionSeatBarChart } from './components/RegionSeatBarChart';
+// import { RegionVoteBarChart } from './components/RegionVoteBarChart';
+import { Overview } from './components/regionOverview/Overview';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import * as d3 from 'd3';
@@ -16,7 +17,7 @@ function App() {
   const [selectedRiding, setSelectedRiding] = useState(null);
   const [selectedCandidates, setSelectedCandidates] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState(["Total"]);
-  const [showDetails, setShowDetails] = useState(false);
+
 
   useEffect(() => {
     d3.json(process.env.PUBLIC_URL + '/data/CA2021/2021result.json').then(setResultByRiding);
@@ -25,8 +26,7 @@ function App() {
     d3.json(process.env.PUBLIC_URL + '/data/CA2021/numberOfVoteByRegion.json').then(setNumberOfVoteByRegion);
   }, []);
 
-  console.log(resultByRegion);
-
+  
   return (
     <div className="App">
       <header className="App-header">
@@ -50,8 +50,7 @@ function App() {
               <option value="N.W.T.">Northwest Territories</option>
               <option value="Nun.">Nunavut</option>
             </select>
-            <div id="overview-chart">
-              <RegionSeatBarChart
+              {/* <RegionSeatBarChart
                 selectedRegion={selectedRegion}
                 resultByDistrict={resultByRegion}
               />
@@ -59,11 +58,14 @@ function App() {
                 selectedRegion={selectedRegion}
                 percentageOfVoteByRegion={percentageOfVoteByRegion}
                 numberOfVoteByRegion={numberOfVoteByRegion}
+              /> */}
+              <Overview
+                selectedRegion={selectedRegion}
+                resultByRegion={resultByRegion}
+                percentageOfVoteByRegion={percentageOfVoteByRegion}
+                numberOfVoteByRegion={numberOfVoteByRegion}
               />
-            </div>
-            <button onClick={() => setShowDetails(true)} style={{ marginTop: "20px" }}>
-              More Details
-            </button>
+          
           </div>
           <input type="text" id="ridingSearch" placeholder="Search by riding name or number..." />
           <div className="row" id='mapContainer'>

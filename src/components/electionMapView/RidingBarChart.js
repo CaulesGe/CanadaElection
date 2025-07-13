@@ -151,21 +151,22 @@ function renderBarChart(svgRef, candidates) {
 
 
 // component
-const RidingBarChart = ({ riding, candidates }) => {
+export const RidingBarChart = ({ candidates }) => {
   const svgRef = useRef();
 
   useEffect(() => {
-    if (riding && candidates.length > 0) {
+    if (candidates.length > 0) {
       renderBarChart(svgRef, candidates);
     }
-  }, [riding, candidates]);
+  }, [candidates]);
 
   return (
     <div>
-      {riding && (
+      {candidates.length > 0 && (
         <>
-          <h3>Province: {riding.properties.prov_name_en}</h3>
-          <h3>Riding: {riding.properties.fed_name_en}</h3>
+          <h3>Province: {candidates[0]["Province"]}</h3>
+          <h3>Riding: {candidates[0]["Electoral District Name/Nom de circonscription"]}</h3>
+          <h3>Code: {candidates[0]["Electoral District Number/Numéro de circonscription"]}</h3>
         </>
       )}
       <svg ref={svgRef}></svg>
@@ -173,5 +174,5 @@ const RidingBarChart = ({ riding, candidates }) => {
   );
 };
 
-export default RidingBarChart;
+
                 

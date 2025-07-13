@@ -1,13 +1,28 @@
+import * as d3 from 'd3';
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ElectionMap } from './ElectionMap';
 import {RidingBarChart} from './RidingBarChart';
 import { RidingTable } from './RidingTable';
 
-export const MapController = ({resultByRiding, setSelectedRiding, setSelectedCandidates, selectedRiding, selectedCandidates}) => {
+export const MapController = ({resultByRiding, resultByDistrict}) => {
     const mapRef = useRef(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchSuggestions, setSearchSuggestions] = useState([]);
+    const [selectedCandidates, setSelectedCandidates] = useState([]);
 
+    useEffect(() => {
+        if (searchQuery != "") {
+            let suggestions = resultByDistrict.filter(
+            r =>
+            r["Electoral District Name/Nom de circonscription"].toLowerCase().startsWith(searchQuery.toLowerCase()) ||
+            r["Electoral District Number/Numéro de circonscription"].toString().startsWith(searchQuery)
+            );
+            setSearchSuggestions(suggestions.slice(0, 10)); // limit to top 10
+        }
+        
+    }, [searchQuery, resultByDistrict])
 
     return (
         <>
@@ -17,53 +32,51 @@ export const MapController = ({resultByRiding, setSelectedRiding, setSelectedCan
                 onChange={(e) => {
                     const query = e.target.value;
                     setSearchQuery(query);
-                    if (query.length > 1) {
-                        const suggestions = resultByRiding.filter(
-                            r =>
-                            r["Electoral District Name/Nom de circonscription"].toLowerCase().includes(query.toLowerCase()) ||
-                            r["Electoral District Number/Numéro de circonscription"].toString().includes(query)
-                        );
-                        setSearchSuggestions(suggestions.slice(0, 10)); // limit to top 10
-                    } else {
-                        setSearchSuggestions([]);
-                    }
                 }}
                 placeholder="Search by riding name or number..."
             />
-            <ul className="search-suggestions">
-                {searchSuggestions.map(r => (
-                    <li
-                    key={r["Constituency Number/Numéro de circonscription"]}
-                    onClick={() => {
-                        setSelectedRiding(r); // update sidebar
-                        setSelectedCandidates(/* logic to get candidates for this riding */);
-                        setSearchQuery(""); // clear search
-                        setSearchSuggestions([]);
+            {searchQuery && searchSuggestions.length > 0 && (
+                <ul className="search-suggestions">
+                    {searchSuggestions.map(r => (
+                        <li
+                            key={r["Electoral District Number/Numéro de circonscription"]}
+                            onClick={() => {
+                                //setSelectedRiding(r);
+                                const candidatesByRiding = Array.from(
+                                    d3.group(resultByRiding, d => d["Electoral District Number/Numéro de circonscription"]),
+                                    ([key, value]) => ({ key, value })
+                                );
+                                const selectedRidingCandidates = candidatesByRiding.find(
+                                    candidate => candidate.key == r["Electoral District Number/Numéro de circonscription"]
+                                );
+                                setSelectedCandidates(selectedRidingCandidates?.value || []);
+                                setSearchQuery("");
+                                setSearchSuggestions([]);
 
-                        // zoom to riding
-                        if (mapRef.current && r.geometry) {
-                            const bounds = L.geoJSON(r.geometry).getBounds();
-                            mapRef.current.fitBounds(bounds);
-                        }
-                    }}
-                    >
-                    {r["Constituency Number/Numéro de circonscription"]} — {r["Constituency Name/Nom de circonscription"]}
-                    </li>
-                ))}
-            </ul>
+                                // zoom to the riding
+                                if (mapRef.current?.zoomToRiding) {
+                                    mapRef.current.zoomToRiding(
+                                      r["Electoral District Number/Numéro de circonscription"]
+                                    );
+                                }
+                            }}
+                        >
+                            {r["Electoral District Number/Numéro de circonscription"]} — {r["Electoral District Name/Nom de circonscription"]}
+                        </li>
+                    ))}
+                </ul>
+            )}
             <div className="row" id='mapContainer'>
                 <div className="col-12 col-md-8">  
                     <p className="title">Click on the map to select a region.</p>
                     <ElectionMap 
                         electionData={resultByRiding} 
-                        setSelectedRiding={setSelectedRiding} 
                         setSelectedCandidates={setSelectedCandidates}
                         mapRef={mapRef}
                     />
                 </div>
                 <div id="detail" className="col-12 col-md-4">
                     <RidingBarChart
-                        riding={selectedRiding}
                         candidates={selectedCandidates}
                     />
                 </div>
@@ -71,7 +84,7 @@ export const MapController = ({resultByRiding, setSelectedRiding, setSelectedCan
             <h2 className="title">Riding Results</h2>
             <div id="ridingDetailContainer">
                 <RidingTable 
-                candidates={selectedCandidates}
+                    candidates={selectedCandidates}
                 />
             </div>
         </>);

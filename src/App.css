@@ -71,3 +71,8 @@
     transition: opacity 0.2s ease-in-out;
   }
   
+  /* Elevate the dropdown */
+.css-13cymwt-control {
+    z-index: 1001 !important;
+    position: relative;
+  }

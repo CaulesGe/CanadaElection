@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-const margin = { top: 70, right: 20, bottom: 200, left: 120 };
-const width = 500 - margin.left - margin.right;
-const height = 600 - margin.top - margin.bottom;
+const margin = { top: 70, right: 20, bottom: 100, left: 120 };
+const width = 600 - margin.left - margin.right;
+const height = 550 - margin.top - margin.bottom;
 
 function getPartyColor(candidateData) {
     if (candidateData.includes("Liberal")) return "#D71920";
@@ -122,7 +122,7 @@ export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selected
         g.selectAll(".midline").remove();
         g.selectAll(".midline-label").remove();
 
-        if (selectedRegion === "Total") {
+        if (selectedRegion == "Total") {
             // draw the midline
             g.append("line")
                 .attr("class", "midline")

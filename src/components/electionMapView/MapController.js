@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import Select from 'react-select';
+import './MapController.css';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ElectionMap } from './ElectionMap';
@@ -74,32 +75,34 @@ export const MapController = ({resultByRiding, resultByDistrict}) => {
                     ))}
                 </ul>
             )} */}
-            <div style={{ padding: '1rem', position: 'relative', zIndex: 1000, margin: '30px' }}>
+            <h3 id='ridingMapTitle'>Riding Map</h3>
+            <div id="ridingSearch" >
                 <Select
-                options={ridingOptions}
-                placeholder="Search by riding name or number..."
-                isClearable
-                onChange={(selectedOption) => {
-                    if (!selectedOption) return;
+                    options={ridingOptions}
+                    classNamePrefix="custom-select"
+                    placeholder="Search by riding name or number..."
+                    isClearable
+                    onChange={(selectedOption) => {
+                        if (!selectedOption) return;
 
-                    const districtNumber = selectedOption.value;
+                        const districtNumber = selectedOption.value;
 
-                    const selectedRidingCandidates = candidatesByRiding.find(
-                        c => c.key == districtNumber
-                    );
+                        const selectedRidingCandidates = candidatesByRiding.find(
+                            c => c.key == districtNumber
+                        );
 
-                    setSelectedCandidates(selectedRidingCandidates?.value || []);
+                        setSelectedCandidates(selectedRidingCandidates?.value || []);
 
-                    // zoom to the riding
-                    if (mapRef.current?.zoomToRiding) {
-                        mapRef.current.zoomToRiding(districtNumber);
-                    }
-                }}
+                        // zoom to the riding
+                        if (mapRef.current?.zoomToRiding) {
+                            mapRef.current.zoomToRiding(districtNumber);
+                        }
+                    }}
                 />
             </div>
             
             <div className="row" id='mapContainer'>
-                <div className="col-12 col-md-8">  
+                <div className="col-12 col-md-7">  
                     <p className="title">Click on the map to select a region.</p>
                     <ElectionMap 
                         electionData={resultByRiding} 
@@ -107,7 +110,7 @@ export const MapController = ({resultByRiding, resultByDistrict}) => {
                         mapRef={mapRef}
                     />
                 </div>
-                <div id="detail" className="col-12 col-md-4">
+                <div id="ridingBarChart" className="col-12 col-md-4">
                     <RidingBarChart
                         candidates={selectedCandidates}
                     />

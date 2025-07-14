@@ -63,7 +63,7 @@ export const ElectionMap = ({ mapRef, electionData, setSelectedCandidates }) => 
     const path = d3.geoPath().projection(projection);
 
     // GeoJSON loading and rendering
-    d3.json('data/CA2021/riding.geojson').then(geo => {
+    d3.json('data/44thCA2021/riding.geojson').then(geo => {
       const features = geo.features;
       mapRef.current = {
         map,

@@ -164,9 +164,9 @@ export const RidingBarChart = ({ candidates }) => {
     <div>
       {candidates.length > 0 && (
         <>
-          <h3>Province: {candidates[0]["Province"]}</h3>
-          <h3>Riding: {candidates[0]["Electoral District Name/Nom de circonscription"]}</h3>
-          <h3>Code: {candidates[0]["Electoral District Number/Numéro de circonscription"]}</h3>
+          <h4>Province: {candidates[0]["Province"]}</h4>
+          <h4>Riding: {candidates[0]["Electoral District Name/Nom de circonscription"]}</h4>
+          <h4>Code: {candidates[0]["Electoral District Number/Numéro de circonscription"]}</h4>
         </>
       )}
       <svg ref={svgRef}></svg>

@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { RegionSeatBarChart } from "./RegionSeatBarChart";
 import { RegionVoteBarChart } from "./RegionVoteBarChart";
 import { DetailModal } from "./DetailModal";
+import { FederalResult } from "./FederalResult";
+import './Overview.css';
 
-export const Overview = ({selectedRegion, resultByRegion, percentageOfVoteByRegion, numberOfVoteByRegion}) => {
+export const Overview = ({resultByRegion, percentageOfVoteByRegion, numberOfVoteByRegion}) => {
+    const [selectedRegion, setSelectedRegion] = useState(["Total"]);
 
     const [showDetails, setShowDetails] = useState(false);
 
@@ -141,8 +144,32 @@ export const Overview = ({selectedRegion, resultByRegion, percentageOfVoteByRegi
     }, [selectedRegion, seatsByRegion, voteByRegion]);
 
     return (
-        <>
-            <div id="overview-chart">
+        <>  <div id="federalOverview">
+                <h2 className="description">Overview of the election results</h2>
+                
+            </div>
+            <FederalResult />
+            <div className="region-selector">
+                <h4 id="regionBreakdown">Regional breakdown</h4>
+                <label htmlFor="regionSelector" id="regionSelectorLabel">Select a region</label>
+                <select id="regionSelector" onChange={(e) => setSelectedRegion(e.target.value)}>
+                    <option value="Total">Canada (Total)</option>
+                    <option value="N.L.">Newfoundland and Labrador</option>
+                    <option value="P.E.I.">Prince Edward Island</option>
+                    <option value="N.S.">Nova Scotia</option>
+                    <option value="N.B.">New Brunswick</option>
+                    <option value="Que.">Quebec</option>
+                    <option value="Ont.">Ontario</option>
+                    <option value="Man.">Manitoba</option>
+                    <option value="Sask.">Saskatchewan</option>
+                    <option value="Alta.">Alberta</option>
+                    <option value="B.C.">British Columbia</option>
+                    <option value="Y.T.">Yukon</option>
+                    <option value="N.W.T.">Northwest Territories</option>
+                    <option value="Nun.">Nunavut</option>
+                </select>
+            </div>
+            <div id="overviewChart">
                 <RegionSeatBarChart 
                     fixedYDomain={fixedYDomain}
                     selectedRegionSeats={selectedRegionSeats}

@@ -36,12 +36,12 @@ export const RidingTable = ({candidates}) => {
 
     return (
     <div>
-        <table ref={tableRef} className="table table-bordered table-sm mt-4" id="ridingDetailTable">
+        <table ref={tableRef}  id="ridingDetailTable">
             <thead>
                 <tr>
                     <th>Candidate</th>
                     <th>Party</th>
-                    <th>Vote %</th>
+                    <th>Share</th>
                     <th>Votes</th>
                 </tr>
             </thead>

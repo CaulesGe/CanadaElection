@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-const margin = { top: 70, right: 20, bottom: 200, left: 120 };
-const width = 500 - margin.left - margin.right;
+const margin = { top: 70, right: 20, bottom: 180, left: 120 };
+const width = 600 - margin.left - margin.right;
 const height = 600 - margin.top - margin.bottom;
 
 // Helpers
@@ -45,12 +45,12 @@ function renderBarChart(svgRef, candidates) {
   }
 
   const x = d3.scaleBand()
-    .domain(top5.map(d => d["Candidate/Candidat"]))
+    .domain(top5.map(d => d["Candidate"]))
     .range([0, width])
     .padding(0.2);
 
   const y = d3.scaleLinear()
-    .domain([0, d3.max(top5, d => +d["Percentage of Votes Obtained /Pourcentage des votes obtenus"])])
+    .domain([0, d3.max(top5, d => +d["Percentage of Votes Obtained"])])
     .nice()
     .range([height, 0]);
 
@@ -78,23 +78,23 @@ function renderBarChart(svgRef, candidates) {
 
   // Bars with transitions
   const bars = g.selectAll(".bar")
-    .data(top5, d => d["Candidate/Candidat"]);
+    .data(top5, d => d["Candidate"]);
 
   bars.enter()
   .append("rect")
   .attr("class", "bar")
-  .attr("x", d => x(d["Candidate/Candidat"]))
+  .attr("x", d => x(d["Candidate"]))
   .attr("width", x.bandwidth())
   .attr("y", height)
   .attr("height", 0)
-  .attr("fill", d => getPartyColor(d["Candidate/Candidat"]))
+  .attr("fill", d => getPartyColor(d["Candidate"]))
   .merge(bars) // 🔗 Combine new + existing bars
   .transition()
   .duration(750)
-  .attr("x", d => x(d["Candidate/Candidat"]))
-  .attr("y", d => y(+d["Percentage of Votes Obtained /Pourcentage des votes obtenus"]))
-  .attr("height", d => height - y(+d["Percentage of Votes Obtained /Pourcentage des votes obtenus"]))
-  .attr("fill", d => getPartyColor(d["Candidate/Candidat"]));
+  .attr("x", d => x(d["Candidate"]))
+  .attr("y", d => y(+d["Percentage of Votes Obtained"]))
+  .attr("height", d => height - y(+d["Percentage of Votes Obtained"]))
+  .attr("fill", d => getPartyColor(d["Candidate"]));
   
   bars.exit().remove();
 
@@ -106,31 +106,31 @@ function renderBarChart(svgRef, candidates) {
         .style("opacity", 1)
         .style("left", event.pageX + 10 + "px")
         .style("top", event.pageY - 15 + "px")
-        .html(`<div>${d["Votes Obtained/Votes obtenus"]}</div>`);
+        .html(`<div>${d["Votes Obtained"]}</div>`);
     })
     .on("mouseout", function (event, d) {
-      d3.select(this).attr("fill", getPartyColor(d["Candidate/Candidat"]));
+      d3.select(this).attr("fill", getPartyColor(d["Candidate"]));
       tooltip.style("display", "none");
     });
 
 
   // Labels
   const labels = g.selectAll(".text")
-  .data(top5, d => d["Candidate/Candidat"]);
+  .data(top5, d => d["Candidate"]);
 
   labels.enter()
     .append("text")
     .attr("class", "text")
-    .attr("x", d => x(d["Candidate/Candidat"]) + x.bandwidth() / 2)
+    .attr("x", d => x(d["Candidate"]) + x.bandwidth() / 2)
     .attr("y", height)
     .attr("text-anchor", "middle")
-    .text(d => d["Percentage of Votes Obtained /Pourcentage des votes obtenus"] + "%")
+    .text(d => d["Percentage of Votes Obtained"] + "%")
     .merge(labels)
     .transition()
     .duration(750)
-    .attr("x", d => x(d["Candidate/Candidat"]) + x.bandwidth() / 2)
-    .attr("y", d => y(+d["Percentage of Votes Obtained /Pourcentage des votes obtenus"]) - 5)
-    .text(d => d["Percentage of Votes Obtained /Pourcentage des votes obtenus"] + "%");
+    .attr("x", d => x(d["Candidate"]) + x.bandwidth() / 2)
+    .attr("y", d => y(+d["Percentage of Votes Obtained"]) - 5)
+    .text(d => d["Percentage of Votes Obtained"] + "%");
 
   labels.exit()
     .transition()
@@ -165,8 +165,8 @@ export const RidingBarChart = ({ candidates }) => {
       {candidates.length > 0 && (
         <>
           <h4>Province: {candidates[0]["Province"]}</h4>
-          <h4>Riding: {candidates[0]["Electoral District Name/Nom de circonscription"]}</h4>
-          <h4>Code: {candidates[0]["Electoral District Number/Numéro de circonscription"]}</h4>
+          <h4>Riding: {candidates[0]["Electoral District Name"]}</h4>
+          <h4>Code: {candidates[0]["Electoral District Number"]}</h4>
         </>
       )}
       <svg ref={svgRef}></svg>

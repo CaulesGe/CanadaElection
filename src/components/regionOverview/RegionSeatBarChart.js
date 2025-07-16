@@ -132,7 +132,7 @@ export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selected
                 .attr("y2", height)
                 .attr("stroke", "black")
                 .attr("stroke-dasharray", "25") // dashed line
-                .attr("stroke-width", 1);
+                .attr("stroke-width", 1).attr("opacity", 0.3);
             
             // label for the midline
 

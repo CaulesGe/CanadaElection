@@ -3,78 +3,35 @@ import Select from 'react-select';
 import './MapController.css';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ElectionMap } from './ElectionMap';
+import { ElectionMap20132023 } from './ElectionMap2013-2023';
+import { ElectionMapPrev2013 } from './ElectionMapPrev2013';
 import {RidingBarChart} from './RidingBarChart';
 import { RidingTable } from './RidingTable';
 
-export const MapController = ({resultByRiding, resultByDistrict}) => {
+export const MapController = ({resultByRiding, resultByDistrict, selectedElection}) => {
     const mapRef = useRef(null);
-    const [searchQuery, setSearchQuery] = useState('');
    // const [searchSuggestions, setSearchSuggestions] = useState([]);
     const [selectedCandidates, setSelectedCandidates] = useState([]);
 
-    useEffect(() => {
-        if (searchQuery != "") {
-            let suggestions = resultByDistrict.filter(
-                r =>
-                r["Electoral District Name/Nom de circonscription"].toLowerCase().startsWith(searchQuery.toLowerCase()) ||
-                r["Electoral District Number/Numéro de circonscription"].toString().startsWith(searchQuery)
-            );
-            //setSearchSuggestions(suggestions.slice(0, 10)); // limit to top 10
-        }
-    }, [searchQuery, resultByDistrict])
-
     const candidatesByRiding = Array.from(
-        d3.group(resultByRiding, d => d["Electoral District Number/Numéro de circonscription"]),
+        d3.group(resultByRiding, d => d["Electoral District Number"]),
         ([key, value]) => ({ key, value })
     );
 
     // All options for the Select dropdown
     const ridingOptions = useMemo(() => {
         return resultByDistrict.map(r => ({
-            value: r["Electoral District Number/Numéro de circonscription"],
-            label: `${r["Electoral District Number/Numéro de circonscription"]} — ${r["Electoral District Name/Nom de circonscription"]}`
+            value: r["Electoral District Number"],
+            label: `${r["Electoral District Number"]} — ${r["Electoral District Name"]}`
         }));
     }, [resultByDistrict]);
 
+    if (!selectedElection || !resultByRiding.length || !resultByDistrict.length) {
+        return <div>Loading map...</div>; // or null
+    }
+
     return (
         <>
-            {/* <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => {
-                    const query = e.target.value;
-                    setSearchQuery(query);
-                }}
-                placeholder="Search by riding name or number..."
-            /> */}
-            {/* {searchQuery && searchSuggestions.length > 0 && (
-                <ul className="search-suggestions">
-                    {searchSuggestions.map(r => (
-                        <li
-                            key={r["Electoral District Number/Numéro de circonscription"]}
-                            onClick={() => {
-                                //setSelectedRiding(r);
-                                const selectedRidingCandidates = candidatesByRiding.find(
-                                    candidate => candidate.key == r["Electoral District Number/Numéro de circonscription"]
-                                );
-                                setSelectedCandidates(selectedRidingCandidates?.value || []);
-                                setSearchQuery("");
-                                setSearchSuggestions([]);
-
-                                // zoom to the riding
-                                if (mapRef.current?.zoomToRiding) {
-                                    mapRef.current.zoomToRiding(
-                                      r["Electoral District Number/Numéro de circonscription"]
-                                    );
-                                }
-                            }}
-                        >
-                            {r["Electoral District Number/Numéro de circonscription"]} — {r["Electoral District Name/Nom de circonscription"]}
-                        </li>
-                    ))}
-                </ul>
-            )} */}
             <h3 id='ridingMapTitle'>Riding Map</h3>
             <div id="ridingSearch" >
                 <Select
@@ -104,11 +61,22 @@ export const MapController = ({resultByRiding, resultByDistrict}) => {
             <div className="row" id='mapContainer'>
                 <div className="col-12 col-md-7">  
                     <p className="title">Click on the map to select a region.</p>
-                    <ElectionMap 
-                        electionData={resultByRiding} 
-                        setSelectedCandidates={setSelectedCandidates}
-                        mapRef={mapRef}
-                    />
+                    {selectedElection === "41stCA2011" ? (
+                        <ElectionMapPrev2013
+                            selectedElection={selectedElection}
+                            electionData={resultByRiding}
+                            setSelectedCandidates={setSelectedCandidates}
+                            mapRef={mapRef}
+                            geojsonUrl={`data/${selectedElection}/riding.geojson`}
+                        />
+                        ) : (
+                        <ElectionMap20132023
+                            selectedElection={selectedElection}
+                            electionData={resultByRiding}
+                            setSelectedCandidates={setSelectedCandidates}
+                            mapRef={mapRef}
+                        />
+                    )}
                 </div>
                 <div id="ridingBarChart" className="col-12 col-md-4">
                     <RidingBarChart
@@ -116,7 +84,6 @@ export const MapController = ({resultByRiding, resultByDistrict}) => {
                     />
                 </div>
             </div>
-            <h2 className="title">Riding Results</h2>
             <div id="ridingDetailContainer">
                 <RidingTable 
                     candidates={selectedCandidates}

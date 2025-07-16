@@ -26,26 +26,27 @@ export const RidingTable = ({candidates}) => {
           .enter()
           .append("tr")
           .html(d => `
-            <td>${d["Candidate/Candidat"]}</td>
-            <td>${getPartyName(d["Candidate/Candidat"])}</td>
-            <td>${d["Percentage of Votes Obtained /Pourcentage des votes obtenus"]}%</td>
-            <td>${d["Votes Obtained/Votes obtenus"]}</td>
+            <td>${d["Candidate"]}</td>
+            <td>${getPartyName(d["Candidate"])}</td>
+            <td>${d["Percentage of Votes Obtained"]}%</td>
+            <td>${d["Votes Obtained"]}</td>
           `);
     }, [candidates]);
     
 
     return (
-    <div>
-        <table ref={tableRef}  id="ridingDetailTable">
-            <thead>
-                <tr>
-                    <th>Candidate</th>
-                    <th>Party</th>
-                    <th>Share</th>
-                    <th>Votes</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-      </table>
-    </div>);
+        <div>
+            <h2 className="title" id="ridingDetailTableTitle">Riding Results</h2>
+            <table ref={tableRef}  id="ridingDetailTable">
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Party</th>
+                        <th>Share</th>
+                        <th>Votes</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+        </table>
+        </div>);
 }

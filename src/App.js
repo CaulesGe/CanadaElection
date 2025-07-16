@@ -18,14 +18,37 @@ function App() {
   // const [selectedRiding, setSelectedRiding] = useState(null);
   // const [selectedCandidates, setSelectedCandidates] = useState([]);
   //const [selectedRegion, setSelectedRegion] = useState(["Total"]);
+  const [selectedElection, setSelectedElection] = useState(['44thCA2021']);
 
+  function cleanKeys(data) {
+    return data.map(entry => {
+      const cleaned = {};
+      Object.entries(entry).forEach(([key, value]) => {
+        const newKey = key.split('/')[0].trim();
+        let newValue = value;
 
+        if (typeof value === 'string' && value.includes('/')) {
+        newValue = value.split('/')[0].trim(); // Remove everything after `/` in string value
+        }
+        cleaned[newKey] = newValue;
+      });
+      return cleaned;
+    });
+  }
+  
   useEffect(() => {
-    d3.json(process.env.PUBLIC_URL + '/data/44thCA2021/2021result.json').then(setCandidatesByRiding);
-    d3.json(process.env.PUBLIC_URL + '/data/44thCA2021/resultByDistrict.json').then(setResultByDistrict);
-    d3.json(process.env.PUBLIC_URL + '/data/44thCA2021/percentageOfVoteByRegion.json').then(setPercentageOfVoteByRegion);
-    d3.json(process.env.PUBLIC_URL + '/data/44thCA2021/numberOfVoteByRegion.json').then(setNumberOfVoteByRegion);
-  }, []);
+    d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/allCandidatesResult.json`)
+      .then(data => setCandidatesByRiding(cleanKeys(data)));
+  
+    d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/resultByDistrict.json`)
+      .then(data => setResultByDistrict(cleanKeys(data)));
+  
+    d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/percentageOfVoteByRegion.json`)
+      .then(data => setPercentageOfVoteByRegion(cleanKeys(data)));
+  
+    d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/numberOfVoteByRegion.json`)
+      .then(data => setNumberOfVoteByRegion(cleanKeys(data)));
+  }, [selectedElection]);
 
   
   return (
@@ -33,6 +56,15 @@ function App() {
       <header className="App-header">
         <div className="container-fluid">
           <h1 className="title">Canada Election 2021</h1>
+          <div id="electionSelector">
+            <select onChange={(e) => setSelectedElection(e.target.value)}>
+                <option value="44thCA2021">44th Federal Election - 2021</option>
+                <option value="43rdCA2019">43rd Federal Election - 2019</option>
+                <option value="42ndCA2015">42nd Federal Election - 2015</option>
+                <option value="41stCA2011">41st Federal Election - 2011</option>
+          </select>
+          </div>
+          
           <div id="overview">   
               {/* <RegionSeatBarChart
                 selectedRegion={selectedRegion}
@@ -44,9 +76,10 @@ function App() {
                 numberOfVoteByRegion={numberOfVoteByRegion}
               /> */}
               <Overview
-                resultByRegion={resultByDistrict}
+                resultByDistrict={resultByDistrict}
                 percentageOfVoteByRegion={percentageOfVoteByRegion}
                 numberOfVoteByRegion={numberOfVoteByRegion}
+                selectedElection={selectedElection}
               />
           
           </div>
@@ -77,6 +110,7 @@ function App() {
           <MapController
             resultByRiding={candidatesByRiding}
             resultByDistrict={resultByDistrict}
+            selectedElection={selectedElection}
           />
         </div>
       </header>

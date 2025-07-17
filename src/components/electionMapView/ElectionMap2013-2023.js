@@ -32,7 +32,7 @@ function initializeMap(container) {
   return map;
 }
 
-export const ElectionMap20132023 = ({ selectedElection, mapRef, electionData, setSelectedCandidates }) => {
+export const ElectionMap20132023 = ({ mapRef, electionData, setSelectedCandidates }) => {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const d3LayerRef = useRef({});

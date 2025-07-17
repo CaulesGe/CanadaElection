@@ -67,7 +67,6 @@ export const MapController = ({resultByRiding, resultByDistrict, selectedElectio
                             electionData={resultByRiding}
                             setSelectedCandidates={setSelectedCandidates}
                             mapRef={mapRef}
-                            geojsonUrl={`data/${selectedElection}/riding.geojson`}
                         />
                         ) : (
                         <ElectionMap20132023

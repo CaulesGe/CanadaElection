@@ -3,8 +3,9 @@ import Select from 'react-select';
 import './MapController.css';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ElectionMap20132023 } from './ElectionMap2013-2023';
-import { ElectionMapPrev2013 } from './ElectionMapPrev2013';
+// import { ElectionMap20132023 } from './ElectionMap2013-2023';
+// import { ElectionMapPrev2013 } from './ElectionMapPrev2013';
+import { ElectionMap } from './ElectionMap';
 import {RidingBarChart} from './RidingBarChart';
 import { RidingTable } from './RidingTable';
 
@@ -12,6 +13,18 @@ export const MapController = ({resultByRiding, resultByDistrict, selectedElectio
     const mapRef = useRef(null);
    // const [searchSuggestions, setSearchSuggestions] = useState([]);
     const [selectedCandidates, setSelectedCandidates] = useState([]);
+   // const [geoData, setGeoData] = useState(null);
+
+    // useEffect(() => {
+    //     console.log(selectedElection);
+    //     if (electionsAfter2013.includes(selectedElection)) {
+    //         d3.json('data/44thCA2021/riding.geojson').then(data => setGeoData(data));
+    //         console.log("after2013");
+    //     } else {
+    //         d3.json('data/41stCA2011/riding.geojson').then(data => setGeoData(data));
+    //         console.log("before2013");
+    //     }
+    // }, [selectedElection]);
 
     const candidatesByRiding = Array.from(
         d3.group(resultByRiding, d => d["Electoral District Number"]),
@@ -61,7 +74,7 @@ export const MapController = ({resultByRiding, resultByDistrict, selectedElectio
             <div className="row" id='mapContainer'>
                 <div className="col-12 col-md-7">  
                     <p className="title">Click on the map to select a region.</p>
-                    {selectedElection === "41stCA2011" ? (
+                    {/* {selectedElection === "41stCA2011" ? (
                         <ElectionMapPrev2013
                             selectedElection={selectedElection}
                             electionData={resultByRiding}
@@ -75,7 +88,13 @@ export const MapController = ({resultByRiding, resultByDistrict, selectedElectio
                             setSelectedCandidates={setSelectedCandidates}
                             mapRef={mapRef}
                         />
-                    )}
+                    )} */}
+                    <ElectionMap
+                        selectedElection={selectedElection}
+                        electionData={resultByRiding}
+                        setSelectedCandidates={setSelectedCandidates}
+                        mapRef={mapRef}
+                    />
                 </div>
                 <div id="ridingBarChart" className="col-12 col-md-4">
                     <RidingBarChart

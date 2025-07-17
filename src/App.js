@@ -18,7 +18,7 @@ function App() {
   // const [selectedRiding, setSelectedRiding] = useState(null);
   // const [selectedCandidates, setSelectedCandidates] = useState([]);
   //const [selectedRegion, setSelectedRegion] = useState(["Total"]);
-  const [selectedElection, setSelectedElection] = useState(['44thCA2021']);
+  const [selectedElection, setSelectedElection] = useState('44thCA2021');
 
   function cleanKeys(data) {
     return data.map(entry => {
@@ -62,6 +62,8 @@ function App() {
                 <option value="43rdCA2019">43rd Federal Election - 2019</option>
                 <option value="42ndCA2015">42nd Federal Election - 2015</option>
                 <option value="41stCA2011">41st Federal Election - 2011</option>
+                <option value="40thCA2008">40th Federal Election - 2008</option>
+                <option value="39thCA2006">39th Federal Election - 2006</option>
           </select>
           </div>
           

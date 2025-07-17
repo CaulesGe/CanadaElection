@@ -76,7 +76,6 @@ export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVo
         Object.keys(voteByRegion).forEach(jurisdiction => {
             voteByRegion[jurisdiction].sort((a, b) => b.numberOfVote - a.numberOfVote); // Sort by percentage
         });
-        console.log(voteByRegion)
         return {voteByRegion};
     }, [numberOfVoteByRegion, percentageOfVoteByRegion]);
     

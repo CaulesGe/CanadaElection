@@ -17,40 +17,58 @@ function App() {
   const [numberOfVoteByRegion, setNumberOfVoteByRegion] = useState([]);
   // const [selectedRiding, setSelectedRiding] = useState(null);
   // const [selectedCandidates, setSelectedCandidates] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState(["Total"]);
+  //const [selectedRegion, setSelectedRegion] = useState(["Total"]);
+  const [selectedElection, setSelectedElection] = useState('44thCA2021');
 
+  // function cleanKeys(data) {
+  //   return data.map(entry => {
+  //     const cleaned = {};
+  //     Object.entries(entry).forEach(([key, value]) => {
+  //       const newKey = key.split('/')[0].trim();
+  //       let newValue = value;
 
+  //       if (typeof value === 'string' && value.includes('/')) {
+  //       newValue = value.split('/')[0].trim(); // Remove everything after `/` in string value
+  //       }
+  //       cleaned[newKey] = newValue;
+  //     });
+  //     return cleaned;
+  //   });
+  // }
+  
   useEffect(() => {
-    d3.json(process.env.PUBLIC_URL + '/data/CA2021/2021result.json').then(setCandidatesByRiding);
-    d3.json(process.env.PUBLIC_URL + '/data/CA2021/resultByDistrict.json').then(setResultByDistrict);
-    d3.json(process.env.PUBLIC_URL + '/data/CA2021/percentageOfVoteByRegion.json').then(setPercentageOfVoteByRegion);
-    d3.json(process.env.PUBLIC_URL + '/data/CA2021/numberOfVoteByRegion.json').then(setNumberOfVoteByRegion);
-  }, []);
+    d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/allCandidatesResult.json`)
+      .then(data => setCandidatesByRiding(data));
+  
+    d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/resultByDistrict.json`)
+      .then(data => setResultByDistrict(data));
+  
+    d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/percentageOfVoteByRegion.json`)
+      .then(data => setPercentageOfVoteByRegion(data));
+  
+    d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/numberOfVoteByRegion.json`)
+      .then(data => setNumberOfVoteByRegion(data));
+  }, [selectedElection]);
 
   
   return (
     <div className="App">
       <header className="App-header">
         <div className="container-fluid">
-          <h1 className="title">Canada Election 2021</h1>
+          <h1 className="title">Canada Election - {selectedElection}</h1>
+          <div id="electionSelector">
+            <select onChange={(e) => setSelectedElection(e.target.value)}>
+                <option value="44thCA2021">44th Federal Election - 2021</option>
+                <option value="43rdCA2019">43rd Federal Election - 2019</option>
+                <option value="42ndCA2015">42nd Federal Election - 2015</option>
+                <option value="41stCA2011">41st Federal Election - 2011</option>
+                <option value="40thCA2008">40th Federal Election - 2008</option>
+                <option value="39thCA2006">39th Federal Election - 2006</option>
+                <option value="38thCA2004">38th Federal Election - 2004</option>
+          </select>
+          </div>
+          
           <div id="overview">   
-            <h2 className="description">Overview of the election results.</h2>
-            <select id="regionSelector" onChange={(e) => setSelectedRegion(e.target.value)}>
-              <option value="Total">Canada (Total)</option>
-              <option value="N.L.">Newfoundland and Labrador</option>
-              <option value="P.E.I.">Prince Edward Island</option>
-              <option value="N.S.">Nova Scotia</option>
-              <option value="N.B.">New Brunswick</option>
-              <option value="Que.">Quebec</option>
-              <option value="Ont.">Ontario</option>
-              <option value="Man.">Manitoba</option>
-              <option value="Sask.">Saskatchewan</option>
-              <option value="Alta.">Alberta</option>
-              <option value="B.C.">British Columbia</option>
-              <option value="Y.T.">Yukon</option>
-              <option value="N.W.T.">Northwest Territories</option>
-              <option value="Nun.">Nunavut</option>
-            </select>
               {/* <RegionSeatBarChart
                 selectedRegion={selectedRegion}
                 resultByDistrict={resultByRegion}
@@ -61,10 +79,10 @@ function App() {
                 numberOfVoteByRegion={numberOfVoteByRegion}
               /> */}
               <Overview
-                selectedRegion={selectedRegion}
-                resultByRegion={resultByDistrict}
+                resultByDistrict={resultByDistrict}
                 percentageOfVoteByRegion={percentageOfVoteByRegion}
                 numberOfVoteByRegion={numberOfVoteByRegion}
+                selectedElection={selectedElection}
               />
           
           </div>
@@ -95,6 +113,7 @@ function App() {
           <MapController
             resultByRiding={candidatesByRiding}
             resultByDistrict={resultByDistrict}
+            selectedElection={selectedElection}
           />
         </div>
       </header>

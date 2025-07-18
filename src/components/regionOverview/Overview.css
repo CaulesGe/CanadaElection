@@ -1,0 +1,71 @@
+.description {
+    font-size: 1.5rem;
+    font-weight: bolder;
+    margin-bottom: 1rem;
+  }
+  
+#federalOverview {
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  align-items: flex-start; /* Align label & select to the left */
+  margin-top: 30px;
+  margin-left: 20%;
+  max-width: 400px; /* Optional: limit width */
+  margin-bottom: 20px;
+}
+
+.region-selector {
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  align-items: flex-start; /* Align label & select to the left */
+  margin-left: 20%;
+  max-width: 400px; /* Optional: limit width */
+}
+
+#regionBreakdown {
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+#regionSelectorLabel {
+  font-size: medium;
+  margin-bottom: 10px;
+}
+
+#regionSelector {
+  padding: 6px 12px;
+  font-size: 1rem;
+  width: 100%; /* Optional: make it fill container */
+}
+
+#overviewChart {
+  margin-top: 30px;
+  background-color:hsla(0, 0%, 83%, 0.237);
+  margin-left: 5%;
+  margin-right: 5%;
+  border-radius: 1pc;
+}
+
+/* Optional: make charts stack on small screens */
+@media (min-width: 768px) {
+  #overview-chart {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+button {
+  padding: 10px 16px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+

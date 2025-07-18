@@ -1,0 +1,37 @@
+#ridingMapTitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
+}
+
+#ridingSearch {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto;
+    width: 400px;            /* ✅ fixed width */
+    max-width: 100%;         /* still responsive if screen is smaller */
+    position: relative;
+    z-index: 1000;
+  }
+
+  .custom-select__control {
+    width: 1000px;
+  }
+  
+  .custom-select__value-container {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #mapContainer {
+    width: 100%;
+    justify-content: center;  /* center horizontally */
+  }
+
+  #ridingBarChart {
+    margin-right: 5%;
+  }
+  

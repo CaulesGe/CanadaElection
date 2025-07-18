@@ -1,22 +1,53 @@
+#ridingDetailTableTitle {
+  margin-top: 20px;
+}
+
 #ridingDetailTable {
-    width: 80%;
-    margin: 0 auto;
-    border-collapse: collapse;
-    font-family: Arial, sans-serif;
-}
-
-#ridingDetailTable th,
-#ridingDetailTable td {
-    padding: 10px 12px;
+    background-color: #fff;
+    padding: 20px 28px;
     border: 1px solid #ccc;
-}
-
-#ridingDetailTable th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-}
-
-#ridingDetailTable tbody tr:nth-child(even) {
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 20px auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+  }
+  
+  #ridingDetailTable h2 {
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  #ridingDetailTable table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 1rem;
+  }
+  
+  #ridingDetailTable th,
+  #ridingDetailTable td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+    box-sizing: border-box;
+  }
+  
+  #ridingDetailTable th {
     background-color: #f9f9f9;
-}
-
+    font-weight: bold;
+  }
+  
+  #ridingDetailTable td:nth-child(3),
+  #ridingDetailTable td:nth-child(4),
+  #ridingDetailTable th:nth-child(3),
+  #ridingDetailTable th:nth-child(4) {
+    text-align: right;
+  }
+  
+  #ridingDetailTable tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  

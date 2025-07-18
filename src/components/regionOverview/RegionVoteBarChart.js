@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 
-const margin = { top: 70, right: 20, bottom: 200, left: 120 };
-const width = 500 - margin.left - margin.right;
-const height = 600 - margin.top - margin.bottom;
+const margin = { top: 70, right: 20, bottom: 100, left: 120 };
+const width = 600 - margin.left - margin.right;
+const height = 550 - margin.top - margin.bottom;
 
 function getPartyColor(candidateData) {
     if (candidateData.includes("Liberal")) return "#D71920";
@@ -41,9 +41,14 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
     const svgRef = useRef();
 
     useEffect(() => {    
-        let filteredPartyData = selectedRegionVote.filter((d, i) => i < 6 && d.percentageOfVote > 1); // filter out parties with less than 1% of the vote and limit to top 6 parties
+        if (!selectedRegionVote || !Array.isArray(selectedRegionVote)) return;
+
+        let filteredPartyData = [...selectedRegionVote]
+            .filter(d => d.percentageOfVote > 1)
+            .sort((a, b) => b.percentageOfVote - a.percentageOfVote)
+            .slice(0, 6); // filter out parties with less than 1% of the vote and limit to top 6 parties
         renderRegionBarChart(svgRef, filteredPartyData, selectedRegion);
-    }, [selectedRegionVote, selectedRegion])
+    }, [selectedRegionVote, selectedRegion]);
 
     
     function renderRegionBarChart(svgRef, filteredPartyData, selectedRegion) {
@@ -83,7 +88,7 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
 
         // bars
         let bars = g.selectAll(".bar")
-            .data(filteredPartyData);
+            .data(filteredPartyData, d => d.party);
 
         // ENTER
         let barsEnter = bars.enter()
@@ -149,7 +154,7 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
         
         //labels
         let labels = g.selectAll(".text")
-            .data(filteredPartyData);
+            .data(filteredPartyData, d => d.party);
 
         labels.enter()
             .append("text")
@@ -157,7 +162,7 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
             .attr("x", d => x(d.party) + x.bandwidth() / 2)
             .attr("y", height) // start from bottom
             .attr("text-anchor", "middle")
-            .text(d => d["Percentage of Votes Obtained /Pourcentage des votes obtenus"] + "%")
+            .text(d => d["Percentage of Votes Obtained"] + "%")
             .merge(labels)
             .transition()
             .duration(750)

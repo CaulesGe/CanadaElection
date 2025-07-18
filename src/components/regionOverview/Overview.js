@@ -11,6 +11,10 @@ export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVo
     const [showDetails, setShowDetails] = useState(false);
 
     //calculate regional Vote
+    // console.log("Selected election:", selectedElection);
+    // console.log("Liberal vote row:", numberOfVoteByRegion.find(d => d["Political affiliation"] === "Liberal Party of Canada"));
+
+
     const { voteByRegion } = React.useMemo(() => {
         if (!numberOfVoteByRegion.length || !percentageOfVoteByRegion.length) {
             return { voteByRegion: {} };
@@ -142,6 +146,7 @@ export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVo
 
     let selectedProvince = provinceNameTable[selectedRegion];
 
+    
     const { selectedRegionSeats, selectedRegionVote } = React.useMemo(() => {
         let selectedRegionSeats = seatsByRegion[selectedProvince];
         let selectedRegionVote = voteByRegion[selectedRegion];

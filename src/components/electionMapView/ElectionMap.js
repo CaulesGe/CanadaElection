@@ -44,7 +44,8 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
     const [geoData20022012, setGeoData20022012] = useState(null);
     const [geoData20132023, setGeoData20132023] = useState(null);
 
-    const electionsAfter2013 = ["42ndCA2015", "43rdCA2019", "44thCA2021"];
+    const electionsAfter2013 = new Set(["42ndCA2015", "43rdCA2019", "44thCA2021"]);
+    const electionsBefore2013 = new Set(["39thCA2006", "40thCA2008", "41thCA2011"]);
 
     const candidatesByRiding = useMemo(() => {
         return Array.from(
@@ -69,17 +70,33 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
         loadGeoData();
     }, []);
 
+    // Election configuration
+    const electionMapConfig = useMemo(() => ({
+      after2013: {
+        match: electionsAfter2013,
+        geoData: geoData20132023,
+        nameField: "fed_name_en",
+        codeField: "fed_code"
+      },
+      before2013: {
+        match: electionsBefore2013,
+        geoData: geoData20022012,
+        nameField: "FEDNAME",
+        codeField: "FEDUID"
+      }
+    }), [geoData20132023, geoData20022012]);
+
     useEffect(() => {
-        if (electionsAfter2013.includes(selectedElection)) {
-            setGeoData(geoData20132023);
-            setFederalName("fed_name_en");
-            setFederalCode("fed_code");
-        } else {
-            setGeoData(geoData20022012);
-            setFederalName("FEDNAME");
-            setFederalCode("FEDUID");
-        }
-    }, [selectedElection, geoData20132023, geoData20022012]);
+      if (!geoData20132023 || !geoData20022012) return;
+
+      const config = electionsAfter2013.has(selectedElection)
+        ? electionMapConfig.after2013
+        : electionMapConfig.before2013;
+
+      setGeoData(prev => (prev !== config.geoData ? config.geoData : prev));
+      setFederalName(prev => (prev !== config.nameField ? config.nameField : prev));
+      setFederalCode(prev => (prev !== config.codeField ? config.codeField : prev));
+    }, [selectedElection, electionMapConfig]);
 
 
     useEffect(() => {

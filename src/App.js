@@ -20,34 +20,34 @@ function App() {
   //const [selectedRegion, setSelectedRegion] = useState(["Total"]);
   const [selectedElection, setSelectedElection] = useState('44thCA2021');
 
-  function cleanKeys(data) {
-    return data.map(entry => {
-      const cleaned = {};
-      Object.entries(entry).forEach(([key, value]) => {
-        const newKey = key.split('/')[0].trim();
-        let newValue = value;
+  // function cleanKeys(data) {
+  //   return data.map(entry => {
+  //     const cleaned = {};
+  //     Object.entries(entry).forEach(([key, value]) => {
+  //       const newKey = key.split('/')[0].trim();
+  //       let newValue = value;
 
-        if (typeof value === 'string' && value.includes('/')) {
-        newValue = value.split('/')[0].trim(); // Remove everything after `/` in string value
-        }
-        cleaned[newKey] = newValue;
-      });
-      return cleaned;
-    });
-  }
+  //       if (typeof value === 'string' && value.includes('/')) {
+  //       newValue = value.split('/')[0].trim(); // Remove everything after `/` in string value
+  //       }
+  //       cleaned[newKey] = newValue;
+  //     });
+  //     return cleaned;
+  //   });
+  // }
   
   useEffect(() => {
     d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/allCandidatesResult.json`)
-      .then(data => setCandidatesByRiding(cleanKeys(data)));
+      .then(data => setCandidatesByRiding(data));
   
     d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/resultByDistrict.json`)
-      .then(data => setResultByDistrict(cleanKeys(data)));
+      .then(data => setResultByDistrict(data));
   
     d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/percentageOfVoteByRegion.json`)
-      .then(data => setPercentageOfVoteByRegion(cleanKeys(data)));
+      .then(data => setPercentageOfVoteByRegion(data));
   
     d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/numberOfVoteByRegion.json`)
-      .then(data => setNumberOfVoteByRegion(cleanKeys(data)));
+      .then(data => setNumberOfVoteByRegion(data));
   }, [selectedElection]);
 
   
@@ -55,7 +55,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div className="container-fluid">
-          <h1 className="title">Canada Election 2021</h1>
+          <h1 className="title">Canada Election - {selectedElection}</h1>
           <div id="electionSelector">
             <select onChange={(e) => setSelectedElection(e.target.value)}>
                 <option value="44thCA2021">44th Federal Election - 2021</option>
@@ -64,6 +64,7 @@ function App() {
                 <option value="41stCA2011">41st Federal Election - 2011</option>
                 <option value="40thCA2008">40th Federal Election - 2008</option>
                 <option value="39thCA2006">39th Federal Election - 2006</option>
+                <option value="38thCA2004">38th Federal Election - 2004</option>
           </select>
           </div>
           

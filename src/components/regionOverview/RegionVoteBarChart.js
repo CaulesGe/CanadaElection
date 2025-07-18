@@ -43,9 +43,12 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
     useEffect(() => {    
         if (!selectedRegionVote || !Array.isArray(selectedRegionVote)) return;
 
-        let filteredPartyData = selectedRegionVote.filter((d, i) => i < 6 && d.percentageOfVote > 1); // filter out parties with less than 1% of the vote and limit to top 6 parties
+        let filteredPartyData = [...selectedRegionVote]
+            .filter(d => d.percentageOfVote > 1)
+            .sort((a, b) => b.percentageOfVote - a.percentageOfVote)
+            .slice(0, 6); // filter out parties with less than 1% of the vote and limit to top 6 parties
         renderRegionBarChart(svgRef, filteredPartyData, selectedRegion);
-    }, [selectedRegionVote, selectedRegion])
+    }, [selectedRegionVote, selectedRegion]);
 
     
     function renderRegionBarChart(svgRef, filteredPartyData, selectedRegion) {
@@ -85,7 +88,7 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
 
         // bars
         let bars = g.selectAll(".bar")
-            .data(filteredPartyData);
+            .data(filteredPartyData, d => d.party);
 
         // ENTER
         let barsEnter = bars.enter()
@@ -151,7 +154,7 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
         
         //labels
         let labels = g.selectAll(".text")
-            .data(filteredPartyData);
+            .data(filteredPartyData, d => d.party);
 
         labels.enter()
             .append("text")

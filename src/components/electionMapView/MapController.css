@@ -31,7 +31,43 @@
     justify-content: center;  /* center horizontally */
   }
 
+  #mapLabel {
+    text-align: center;
+  }
+
   #ridingBarChart {
     margin-right: 5%;
   }
   
+  /* ✅ Responsive mobile-specific changes */
+@media (max-width: 768px) {
+  .custom-select__control {
+    width: 90%; /* scale select input on smaller screens */
+  }
+
+  #ridingSearch {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 20px auto;
+  }
+
+  #mapContainer {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    width: 100%;
+    justify-content: center;  /* center horizontally */
+  }
+
+  #map {
+    height:50%;
+    width: 100%;
+  }
+
+  #ridingBarChart {
+    width: 100%;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+}

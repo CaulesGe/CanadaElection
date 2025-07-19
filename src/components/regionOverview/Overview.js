@@ -155,12 +155,13 @@ export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVo
 
     return (
         <> 
+            <p className="description" id="overviewTitle">Overview of the election result</p> 
             <div id="federalOverview">
-                <h1 className="description">Overview of the election result</h1> 
+                <FederalResult 
+                    selectedElection={selectedElection}
+                />
             </div>
-            <FederalResult 
-                selectedElection={selectedElection}
-            />
+             
             <div className="region-selector">
                 <h4 id="regionBreakdown">Regional breakdown</h4>
                 <label htmlFor="regionSelector" id="regionSelectorLabel">Select a region</label>

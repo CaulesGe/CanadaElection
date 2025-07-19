@@ -1,25 +1,26 @@
-.description {
+#overviewTitle {
     font-size: 1.5rem;
     font-weight: bolder;
     margin-bottom: 1rem;
-    justify-content: center;
-    text-align: center;
+    text-align: start;
+    margin-left: 20%;
   }
   
 #federalOverview {
   display: flex;
-  flex-direction: column; /* Stack children vertically */
- /* Align label & select to the left */
-  margin-top: 30px;
-  margin-left: 20%;
-  max-width: 400px; /* Optional: limit width */
-  margin-bottom: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* optional */
+  margin: 30px auto 20px auto;  /* center horizontally */
+  max-width: 400px;
 }
+
 
 .region-selector {
   display: flex;
   flex-direction: column; /* Stack children vertically */
   align-items: flex-start; /* Align label & select to the left */
+  margin-top: 5%;
   margin-left: 20%;
   max-width: 400px; /* Optional: limit width */
 }
@@ -41,6 +42,8 @@
 }
 
 #overviewChart {
+  display: flex;
+  flex-direction: row;
   margin-top: 30px;
   background-color:hsla(0, 0%, 83%, 0.237);
   margin-left: 5%;
@@ -71,3 +74,23 @@ button:hover {
   background-color: #0056b3;
 }
 
+@media (max-width: 768px) {
+  #overviewTitle {
+    margin-left: 0;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+
+  .region-selector {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Align label & select to the left */
+    max-width: 400px; /* Optional: limit width */
+  }
+
+  #overviewChart {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}

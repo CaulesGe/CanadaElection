@@ -72,23 +72,8 @@ export const MapController = ({resultByRiding, resultByDistrict, selectedElectio
             </div>
             
             <div className="row" id='mapContainer'>
-                <div className="col-12 col-md-7">  
-                    <p className="title">Click on the map to select a region.</p>
-                    {/* {selectedElection === "41stCA2011" ? (
-                        <ElectionMapPrev2013
-                            selectedElection={selectedElection}
-                            electionData={resultByRiding}
-                            setSelectedCandidates={setSelectedCandidates}
-                            mapRef={mapRef}
-                        />
-                        ) : (
-                        <ElectionMap20132023
-                            selectedElection={selectedElection}
-                            electionData={resultByRiding}
-                            setSelectedCandidates={setSelectedCandidates}
-                            mapRef={mapRef}
-                        />
-                    )} */}
+                <div className="col-12 col-md-7" id='map'>  
+                    <p id='mapLabel'>Click on the map to select a region.</p>
                     <ElectionMap
                         selectedElection={selectedElection}
                         electionData={resultByRiding}

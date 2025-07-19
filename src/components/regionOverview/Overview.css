@@ -2,12 +2,14 @@
     font-size: 1.5rem;
     font-weight: bolder;
     margin-bottom: 1rem;
+    justify-content: center;
+    text-align: center;
   }
   
 #federalOverview {
   display: flex;
   flex-direction: column; /* Stack children vertically */
-  align-items: flex-start; /* Align label & select to the left */
+ /* Align label & select to the left */
   margin-top: 30px;
   margin-left: 20%;
   max-width: 400px; /* Optional: limit width */

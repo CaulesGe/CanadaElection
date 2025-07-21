@@ -3,12 +3,13 @@ import { RegionSeatBarChart } from "./RegionSeatBarChart";
 import { RegionVoteBarChart } from "./RegionVoteBarChart";
 import { DetailModal } from "./DetailModal";
 import { FederalResult } from "./FederalResult";
+import { Helmet } from 'react-helmet';
 import './Overview.css';
 
 export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVoteByRegion, selectedElection}) => {
-    const [selectedRegion, setSelectedRegion] = useState(["Total"]);
-
+    const [selectedRegion, setSelectedRegion] = useState("Total");
     const [showDetails, setShowDetails] = useState(false);
+    const [chartType, setChartType] = useState("barChart");
 
     //calculate regional Vote
     // console.log("Selected election:", selectedElection);
@@ -153,44 +154,64 @@ export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVo
         return {selectedRegionSeats, selectedRegionVote};
     }, [selectedRegion, seatsByRegion, voteByRegion]);
 
+    function chartButtonHandler() {
+        setChartType(prev => prev === "barChart" ? "pieChart" : "barChart");
+    }
+
+    const isDataReady = resultByDistrict.length > 0 && numberOfVoteByRegion.length > 0 && percentageOfVoteByRegion.length > 0;
+
+    if (!isDataReady) {
+    return <p>Loading...</p>;
+    }
+
     return (
-        <> 
+        <>  
+            {/* <Helmet>
+                <title> Regional Election Results</title>
+                <meta name="description" content={`View election results by region with pieChart and barChart, including vote shares and seats.`} />
+            </Helmet> */}
             <p className="description" id="overviewTitle">Overview of the election result</p> 
             <div id="federalOverview">
                 <FederalResult 
                     selectedElection={selectedElection}
                 />
             </div>
-             
             <div className="region-selector">
                 <h4 id="regionBreakdown">Regional breakdown</h4>
-                <label htmlFor="regionSelector" id="regionSelectorLabel">Select a region</label>
-                <select id="regionSelector" onChange={(e) => setSelectedRegion(e.target.value)}>
-                    <option value="Total">Canada (Total)</option>
-                    <option value="N.L.">Newfoundland and Labrador</option>
-                    <option value="P.E.I.">Prince Edward Island</option>
-                    <option value="N.S.">Nova Scotia</option>
-                    <option value="N.B.">New Brunswick</option>
-                    <option value="Que.">Quebec</option>
-                    <option value="Ont.">Ontario</option>
-                    <option value="Man.">Manitoba</option>
-                    <option value="Sask.">Saskatchewan</option>
-                    <option value="Alta.">Alberta</option>
-                    <option value="B.C.">British Columbia</option>
-                    <option value="Y.T.">Yukon</option>
-                    <option value="N.W.T.">Northwest Territories</option>
-                    <option value="Nun.">Nunavut</option>
-                </select>
+                    <label htmlFor="regionSelector" id="regionSelectorLabel">Select a region</label>
+                <div id="selectorRow">
+                    <select id="regionSelector" onChange={(e) => setSelectedRegion(e.target.value)}>
+                        <option value="Total">Canada (Total)</option>
+                        <option value="N.L.">Newfoundland and Labrador</option>
+                        <option value="P.E.I.">Prince Edward Island</option>
+                        <option value="N.S.">Nova Scotia</option>
+                        <option value="N.B.">New Brunswick</option>
+                        <option value="Que.">Quebec</option>
+                        <option value="Ont.">Ontario</option>
+                        <option value="Man.">Manitoba</option>
+                        <option value="Sask.">Saskatchewan</option>
+                        <option value="Alta.">Alberta</option>
+                        <option value="B.C.">British Columbia</option>
+                        <option value="Y.T.">Yukon</option>
+                        <option value="N.W.T.">Northwest Territories</option>
+                        <option value="Nun.">Nunavut</option>
+                    </select>
+                    <button id="chartButton" onClick={chartButtonHandler}>
+                        Switch to {chartType === "barChart" ? "Pie Chart" : "Bar Chart"}
+                    </button>
+                </div>
             </div>
             <div id="overviewChart">
                 <RegionSeatBarChart 
                     fixedYDomain={fixedYDomain}
                     selectedRegionSeats={selectedRegionSeats}
                     selectedRegion={selectedRegion}
+                    chartType={chartType}
                 />
                 <RegionVoteBarChart 
                     selectedRegionVote={selectedRegionVote}
                     selectedRegion={selectedRegion}
+                    chartType={chartType}
                 />
             </div>
             {showDetails &&

@@ -16,33 +16,38 @@ function getPartyColor(candidateData) {
     return "#808080";
 }
 
-export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selectedRegion}) => {
+export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selectedRegion, chartType}) => {
     const svgRef = useRef();
 
     useEffect(() => {    
-        renderRegionBarChart(svgRef, fixedYDomain, selectedRegionSeats, selectedRegion);
-    }, [fixedYDomain, selectedRegionSeats, selectedRegion]);
+        renderChart(svgRef, fixedYDomain, selectedRegionSeats, selectedRegion, chartType);
+    }, [fixedYDomain, selectedRegionSeats, selectedRegion, chartType]);
 
-    
-    function renderRegionBarChart(svgRef, fixedYDomain, selectedRegionSeats, selectedRegion) {
+
+    function renderChart(svgRef, fixedYDomain, selectedRegionSeats, selectedRegion, chartType) {
+        const svg = d3.select(svgRef.current);
+        svg.selectAll("*").remove(); // clear previous render
+
+        if (chartType === 'barChart') {
+            renderRegionBarChart(svg, fixedYDomain, selectedRegionSeats, selectedRegion);
+        } else if (chartType === 'pieChart') {
+            renderRegionPieChart(svg, fixedYDomain, selectedRegionSeats, selectedRegion);
+        }
+    }
+
+
+    function renderRegionBarChart(svg, fixedYDomain, selectedRegionSeats, selectedRegion) {
         //let selectedRegionSeats = seatsByRegion[provinceNameTable[selectedRegion]];
         let sortedSelectedRegionSeats = fixedYDomain.map(party => {
             return [party, selectedRegionSeats[party] || 0];
         }).sort((a, b) => b[1] - a[1]);  // Sort descending by seats in region
 
 
-        const svg = d3.select(svgRef.current)
+        const g = svg
             .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
-    
-        let g = svg.select("g.chart-container");
-        if (g.empty()) {
-            g = svg.append("g")
-            .attr("class", "chart-container")
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
-        } else {
-            g.selectAll("*").remove();
-        }
     
         const x = d3.scaleLinear()
             .range([0, width]);
@@ -94,6 +99,7 @@ export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selected
             .attr("text-anchor", "middle")
             .style("font-size", "17px")
             .text(`Seats – ${selectedRegion}`);
+            
         // Labels
         const labels = g.selectAll(".text")
             .data(sortedSelectedRegionSeats, d => d[0]);
@@ -147,10 +153,102 @@ export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selected
                 .attr("fill", "black");
       }
     }
+    
+
+    function renderRegionPieChart(svg, fixedYDomain, selectedRegionSeats, selectedRegion) {
+        const width = 600;
+        const height = 360;
+        const radius = Math.min(width, height) / 2;
+
+        const data = fixedYDomain
+            .map(party => ({ party, value: selectedRegionSeats[party] || 0 }))
+            .filter(d => d.value > 0);
+
+        const pie = d3.pie().value(d => d.value);
+        const arc = d3.arc().innerRadius(0).outerRadius(radius);
+        const outerArc = d3.arc().innerRadius(radius * 1.01).outerRadius(radius * 1.01);
+
+        const g = svg
+            .attr("width", width + 100)
+            .attr("height", height + 100)
+            .append("g")
+            .attr("transform", `translate(${width / 2 + 20},${height / 2 + 80})`);
+
+        const arcs = g.selectAll(".arc")
+            .data(pie(data))
+            .enter()
+            .append("g")
+            .attr("class", "arc");
+
+        // Add pie slices with transition
+        arcs.append("path")
+            .attr("fill", d => getPartyColor(d.data.party))
+            .transition()
+            .duration(500)
+            .attrTween("d", function(d) {
+                const i = d3.interpolate({ startAngle: d.startAngle, endAngle: d.startAngle }, d);
+                return t => arc(i(t));
+            });
+
+            
+        // Polylines
+        arcs.append("polyline")
+            .attr("stroke", "#000")
+            .attr("stroke-width", 1)
+            .attr("fill", "none")
+            .attr("points", (d, i) => {
+                const midAngle = (d.startAngle + d.endAngle) / 2;
+                const side = midAngle > Math.PI ? -1 : 1;
+                const innerPos = arc.centroid(d);
+                const outerPos = outerArc.centroid(d);
+                const labelPos = [...outerPos];
+
+                // Adjust horizontal distance
+                labelPos[0] = radius * 1.1 * side;
+
+                // Adjust vertical staggering
+                const emToPx = 11;
+                const dyOffset = (i - data.length / 2) * 0.4 * side * emToPx;
+                labelPos[1] += dyOffset;
+
+                return [innerPos, outerPos, labelPos];
+            });
+
+
+        // Add labels
+        arcs.append("text")
+            .attr("transform", (d, i) => {
+                const midAngle = (d.startAngle + d.endAngle) / 2;
+                const side = midAngle > Math.PI ? -1 : 1;
+                const pos = outerArc.centroid(d);
+                pos[0] = radius * 1.2 * side;
+                const emToPx = 11;
+                const dyOffset = (i - data.length / 2) * 0.6 * side * emToPx;
+                pos[1] += dyOffset;
+
+                return `translate(${pos})`;
+            })
+            .attr("dy", "0.35em")
+            .attr("text-anchor", d => {
+                const midAngle = (d.startAngle + d.endAngle) / 2;
+                return midAngle > Math.PI ? "end" : "start";
+            })
+            .style("font-size", "11px")
+            .text(d => `${d.data.party}: ${d.data.value}`);
+
+        // Add title
+        g.append("text")
+            .attr("class", "title")
+            .attr("y", -radius - 40)
+            .attr("text-anchor", "middle")
+            .style("font-size", "16px")
+            .text(`Seats – ${selectedRegion}`);
+    }
+
 
     return (
         <>
-            <svg ref={svgRef}></svg>
+            <svg ref={svgRef} ></svg>
         </>
     );
 }

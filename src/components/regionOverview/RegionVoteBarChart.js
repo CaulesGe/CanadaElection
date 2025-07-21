@@ -37,7 +37,7 @@ function getPartyName(party) {
     }
 }
 
-export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
+export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion, chartType}) => {
     const svgRef = useRef();
 
     useEffect(() => {    
@@ -47,23 +47,26 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
             .filter(d => d.percentageOfVote > 1)
             .sort((a, b) => b.percentageOfVote - a.percentageOfVote)
             .slice(0, 6); // filter out parties with less than 1% of the vote and limit to top 6 parties
-        renderRegionBarChart(svgRef, filteredPartyData, selectedRegion);
-    }, [selectedRegionVote, selectedRegion]);
+        renderChart(svgRef, filteredPartyData, selectedRegion);
+    }, [selectedRegionVote, selectedRegion, chartType]);
 
-    
-    function renderRegionBarChart(svgRef, filteredPartyData, selectedRegion) {
-        const svg = d3.select(svgRef.current)
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
+    function renderChart(svgRef, filteredPartyData, selectedRegion) {
+        const svg = d3.select(svgRef.current);
+        svg.selectAll("*").remove(); // clear previous render
 
-        let g = svg.select("g.chart-container");
-        if (g.empty()) {
-            g = svg.append("g")
-            .attr("class", "chart-container")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
-        } else {
-            g.selectAll("*").remove();
+        if (chartType === 'barChart') {
+            renderRegionBarChart(svg, filteredPartyData, selectedRegion);
+        } else if (chartType === 'pieChart') {
+            renderRegionPieChart(svg, filteredPartyData, selectedRegion);
         }
+    }
+
+    function renderRegionBarChart(svg, filteredPartyData, selectedRegion) {
+        const g = svg
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
         const x = d3.scaleBand()
             .domain(filteredPartyData.map(d => d.party))
@@ -173,6 +176,123 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion}) => {
         labels.exit().remove();
 
     }
+
+    function renderRegionPieChart(svg, filteredPartyData, selectedRegion) {
+        const width = 600;
+        const height = 360;
+        const radius = Math.min(width, height) / 2;
+
+        // Preprocess data: map to required value field
+        const data = filteredPartyData.map(d => ({
+            party: d.party,
+            value: d.percentageOfVote
+        }));
+
+        const g = svg
+            .attr("width", width)
+            .attr("height", height + 140)
+            .append("g")
+            .attr("transform", `translate(${width / 2},${height / 2 + 80})`);
+
+        const pie = d3.pie().value(d => d.value);
+        const arc = d3.arc().innerRadius(0).outerRadius(radius);
+        const outerArc = d3.arc().innerRadius(radius * 1.01).outerRadius(radius * 1.01);
+
+        const arcs = g.selectAll(".arc")
+            .data(pie(data))
+            .enter()
+            .append("g")
+            .attr("class", "arc");
+
+        // Pie slices
+        arcs.append("path")
+            .attr("fill", d => getPartyColor(d.data.party))
+            .transition()
+            .duration(500)
+            .attrTween("d", function(d) {
+                const i = d3.interpolate({ startAngle: d.startAngle, endAngle: d.startAngle }, d);
+                return t => arc(i(t));
+            });
+
+        // Tooltip
+        let tooltip = d3.select("#overviewTooltip");
+        if (tooltip.empty()) {
+            tooltip = d3.select("body")
+                .append("div")
+                .attr("class", "tooltip")
+                .attr("id", "overviewTooltip")
+                .style("position", "absolute")
+                .style("display", "none")
+                .style("pointer-events", "none");
+        }
+
+        arcs.select("path")
+            .on("mouseover", function (event, d) {
+                d3.select(this).attr("stroke", "white").attr("stroke-width", 2);
+                tooltip
+                    .style("display", "block")
+                    .style("left", event.pageX + 10 + "px")
+                    .style("top", event.pageY - 10 + "px")
+                    .html(`<strong>${d.data.party}</strong>: ${d.data.value}%`);
+            })
+            .on("mouseout", function () {
+                d3.select(this).attr("stroke", null);
+                tooltip.style("display", "none");
+            });
+
+        // // Polylines
+        // arcs.append("polyline")
+        //     .attr("stroke", "#000")
+        //     .attr("stroke-width", 1)
+        //     .attr("fill", "none")
+        //     .attr("points", (d, i) => {
+        //         const midAngle = (d.startAngle + d.endAngle) / 2;
+        //         const side = midAngle > Math.PI ? -1 : 1;
+        //         const innerPos = arc.centroid(d);
+        //         const outerPos = outerArc.centroid(d);
+        //         const labelPos = [...outerPos];
+
+        //         // Adjust horizontal distance
+        //         labelPos[0] = radius * 1.1 * side;
+
+        //         // Adjust vertical staggering
+        //         const emToPx = 11;
+        //         const dyOffset = (i - data.length / 2) * 0.4 * side * emToPx;
+        //         labelPos[1] += dyOffset;
+
+        //         return [innerPos, outerPos, labelPos];
+        //     });
+
+        // // Labels
+        // arcs.append("text")
+        //     .attr("transform", (d, i) => {
+        //         const midAngle = (d.startAngle + d.endAngle) / 2;
+        //         const side = midAngle > Math.PI ? -1 : 1;
+        //         const pos = outerArc.centroid(d);
+        //         pos[0] = radius * 1.2 * side;
+        //         const emToPx = 11;
+        //         const dyOffset = (i - data.length / 2) * 0.6 * side * emToPx;
+        //         pos[1] += dyOffset;
+
+        //         return `translate(${pos})`;
+        //     })
+        //     .attr("dy", "0.35em")
+        //     .attr("text-anchor", d => {
+        //         const midAngle = (d.startAngle + d.endAngle) / 2;
+        //         return midAngle > Math.PI ? "end" : "start";
+        //     })
+        //     .style("font-size", "11px")
+        //     .text(d => `${getPartyName(d.data.party)}: ${d.data.value}%`);
+
+        // Title
+        g.append("text")
+            .attr("class", "title")
+            .attr("y", -radius - 40)
+            .attr("text-anchor", "middle")
+            .style("font-size", "17px")
+            .text(`Popular Vote – ${selectedRegion}`);
+    }
+
 
     return (
         <>

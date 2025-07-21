@@ -4,6 +4,7 @@ import { Overview } from './components/regionOverview/Overview';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import * as d3 from 'd3';
+import { Helmet } from 'react-helmet';
 
 function App() {
   const [candidatesByRiding, setCandidatesByRiding] = useState([]);
@@ -27,44 +28,51 @@ function App() {
   }, [selectedElection]);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div className="container-fluid">
-          <h1 className="title">Canada Election - {selectedElection}</h1>
-          
-          <div id="electionSelector" className="mb-4">
-            <select
-              className="form-select w-auto"
-              onChange={(e) => setSelectedElection(e.target.value)}
-              value={selectedElection}
-            >
-              <option value="44thCA2021">44th Federal Election - 2021</option>
-              <option value="43rdCA2019">43rd Federal Election - 2019</option>
-              <option value="42ndCA2015">42nd Federal Election - 2015</option>
-              <option value="41stCA2011">41st Federal Election - 2011</option>
-              <option value="40thCA2008">40th Federal Election - 2008</option>
-              <option value="39thCA2006">39th Federal Election - 2006</option>
-              <option value="38thCA2004">38th Federal Election - 2004</option>
-            </select>
-          </div>
+    <>
+      {/* <Helmet>
+        <title>Canada Election Map Viewer</title>
+        <meta name="description" content="Interactive map to explore Canadian federal election results by riding and party." />
+      </Helmet> */}
+      <div className="App">
+        <header className="App-header">
+          <div className="container-fluid">
+            <h1 className="title">Canada Election - {selectedElection}</h1>
+            
+            <div id="electionSelector" className="mb-4">
+              <select
+                className="form-select w-auto"
+                onChange={(e) => setSelectedElection(e.target.value)}
+                value={selectedElection}
+              >
+                <option value="44thCA2021">44th Federal Election - 2021</option>
+                <option value="43rdCA2019">43rd Federal Election - 2019</option>
+                <option value="42ndCA2015">42nd Federal Election - 2015</option>
+                <option value="41stCA2011">41st Federal Election - 2011</option>
+                <option value="40thCA2008">40th Federal Election - 2008</option>
+                <option value="39thCA2006">39th Federal Election - 2006</option>
+                <option value="38thCA2004">38th Federal Election - 2004</option>
+              </select>
+            </div>
 
-          <div id="overview">
-            <Overview
+            <div id="overview">
+              <Overview
+                resultByDistrict={resultByDistrict}
+                percentageOfVoteByRegion={percentageOfVoteByRegion}
+                numberOfVoteByRegion={numberOfVoteByRegion}
+                selectedElection={selectedElection}
+              />
+            </div>
+
+            <MapController
+              resultByRiding={candidatesByRiding}
               resultByDistrict={resultByDistrict}
-              percentageOfVoteByRegion={percentageOfVoteByRegion}
-              numberOfVoteByRegion={numberOfVoteByRegion}
               selectedElection={selectedElection}
             />
           </div>
-
-          <MapController
-            resultByRiding={candidatesByRiding}
-            resultByDistrict={resultByDistrict}
-            selectedElection={selectedElection}
-          />
-        </div>
-      </header>
-    </div>
+        </header>
+      </div>
+    </>
+    
   );
 }
 

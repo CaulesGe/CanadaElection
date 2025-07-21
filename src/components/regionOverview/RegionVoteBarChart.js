@@ -185,7 +185,8 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion, chartTyp
         // Preprocess data: map to required value field
         const data = filteredPartyData.map(d => ({
             party: d.party,
-            value: d.percentageOfVote
+            value: d.percentageOfVote,
+            numberOfVote: d.numberOfVote
         }));
 
         const g = svg
@@ -233,56 +234,16 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion, chartTyp
                     .style("display", "block")
                     .style("left", event.pageX + 10 + "px")
                     .style("top", event.pageY - 10 + "px")
-                    .html(`<strong>${d.data.party}</strong>: ${d.data.value}%`);
+                    .html(`
+                        <div>
+                            <strong>${d.data.party}</strong>: ${d.data.value}% </br> 
+                                ${d.data.numberOfVote}
+                            </div>`);
             })
             .on("mouseout", function () {
                 d3.select(this).attr("stroke", null);
                 tooltip.style("display", "none");
             });
-
-        // // Polylines
-        // arcs.append("polyline")
-        //     .attr("stroke", "#000")
-        //     .attr("stroke-width", 1)
-        //     .attr("fill", "none")
-        //     .attr("points", (d, i) => {
-        //         const midAngle = (d.startAngle + d.endAngle) / 2;
-        //         const side = midAngle > Math.PI ? -1 : 1;
-        //         const innerPos = arc.centroid(d);
-        //         const outerPos = outerArc.centroid(d);
-        //         const labelPos = [...outerPos];
-
-        //         // Adjust horizontal distance
-        //         labelPos[0] = radius * 1.1 * side;
-
-        //         // Adjust vertical staggering
-        //         const emToPx = 11;
-        //         const dyOffset = (i - data.length / 2) * 0.4 * side * emToPx;
-        //         labelPos[1] += dyOffset;
-
-        //         return [innerPos, outerPos, labelPos];
-        //     });
-
-        // // Labels
-        // arcs.append("text")
-        //     .attr("transform", (d, i) => {
-        //         const midAngle = (d.startAngle + d.endAngle) / 2;
-        //         const side = midAngle > Math.PI ? -1 : 1;
-        //         const pos = outerArc.centroid(d);
-        //         pos[0] = radius * 1.2 * side;
-        //         const emToPx = 11;
-        //         const dyOffset = (i - data.length / 2) * 0.6 * side * emToPx;
-        //         pos[1] += dyOffset;
-
-        //         return `translate(${pos})`;
-        //     })
-        //     .attr("dy", "0.35em")
-        //     .attr("text-anchor", d => {
-        //         const midAngle = (d.startAngle + d.endAngle) / 2;
-        //         return midAngle > Math.PI ? "end" : "start";
-        //     })
-        //     .style("font-size", "11px")
-        //     .text(d => `${getPartyName(d.data.party)}: ${d.data.value}%`);
 
         // Title
         g.append("text")

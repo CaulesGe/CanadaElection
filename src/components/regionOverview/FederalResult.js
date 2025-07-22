@@ -1,6 +1,6 @@
 export const FederalResult = ({ selectedElection }) => {
-    const trudeauTime = new Set(['42ndCA2015', '43rdCA2019', '44thCA2021']);
-    const harperTime = new Set(['39thCA2006', '40thCA2008', '41stCA2011']);
+    const trudeauTime = new Set(['2015', '2019', '2021']);
+    const harperTime = new Set(['2006', '2008', '2011']);
 
     let pmName;
     let pmParty;

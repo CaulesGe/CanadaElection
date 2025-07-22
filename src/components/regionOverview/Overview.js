@@ -1,20 +1,22 @@
 import React, { useState } from "react";
-import { RegionSeatBarChart } from "./RegionSeatBarChart";
-import { RegionVoteBarChart } from "./RegionVoteBarChart";
+import { RegionSeatChart } from "./RegionSeatChart";
+import { RegionVoteChart } from "./RegionVoteChart";
 import { DetailModal } from "./DetailModal";
 import { FederalResult } from "./FederalResult";
+import { HistoricalSeats } from "./HistoricalSeats";
 import { Helmet } from 'react-helmet';
 import './Overview.css';
 
-export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVoteByRegion, selectedElection}) => {
+export const Overview = ({allResultsByDistrict , percentageOfVoteByRegion, numberOfVoteByRegion, selectedElection}) => {
     const [selectedRegion, setSelectedRegion] = useState("Total");
     const [showDetails, setShowDetails] = useState(false);
     const [chartType, setChartType] = useState("barChart");
+    const resultByDistrict = allResultsByDistrict[selectedElection];
 
     //calculate regional Vote
     // console.log("Selected election:", selectedElection);
     // console.log("Liberal vote row:", numberOfVoteByRegion.find(d => d["Political affiliation"] === "Liberal Party of Canada"));
-
+    //console.log(allResultsByDistrict);
 
     const { voteByRegion } = React.useMemo(() => {
         if (!numberOfVoteByRegion.length || !percentageOfVoteByRegion.length) {
@@ -84,6 +86,7 @@ export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVo
         return {voteByRegion};
     }, [numberOfVoteByRegion, percentageOfVoteByRegion]);
     
+    
     //calculate regional Seats
     const provinces = ["Newfoundland and Labrador", "Prince Edward Island", 
         "Nova Scotia", "New Brunswick", "Quebec", "Ontario",
@@ -95,70 +98,140 @@ export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVo
         "Man.": "Manitoba", "Sask.": "Saskatchewan", "Alta.": "Alberta", "B.C.": "British Columbia",
         "Y.T.": "Yukon", "N.W.T.": "Northwest Territories", "Nun.": "Nunavut"};
 
-    const { seatsByRegion, fixedYDomain } = React.useMemo(() => {
-        let seatsByRegion = {};
-        provinces.forEach(province => {
-            seatsByRegion[province] = {
-                Total: 0,
+    // const { seatsByRegion, fixedYDomain } = React.useMemo(() => {
+    //     let seatsByRegion = {};
+    //     provinces.forEach(province => {
+    //         seatsByRegion[province] = {
+    //             Total: 0,
+    //             Conservative: 0,
+    //             Liberal: 0,
+    //             NDP: 0,
+    //             Bloc: 0,
+    //             Green: 0,
+    //             PPC: 0,
+    //             Independent: 0
+    //         };
+    //     });
+    
+    //     resultByDistrict.forEach(district => {
+    //         let province = district.Province;
+    //         if (district["Elected Candidate"].includes("Conservative")) {
+    //             seatsByRegion[province].Conservative++;
+    //             seatsByRegion["Total"].Conservative++;
+    //         } else if (district["Elected Candidate"].includes("Liberal")) {
+    //             seatsByRegion[province].Liberal++;
+    //             seatsByRegion["Total"].Liberal++;
+    //         } else if (district["Elected Candidate"].includes("NDP")) {
+    //             seatsByRegion[province].NDP++;
+    //             seatsByRegion["Total"].NDP++;
+    //         } else if (district["Elected Candidate"].includes("Bloc")) {
+    //             seatsByRegion[province].Bloc++;
+    //             seatsByRegion["Total"].Bloc++;
+    //         } else if (district["Elected Candidate"].includes("Green")) {
+    //             seatsByRegion[province].Green++;
+    //             seatsByRegion["Total"].Green++;
+    //         } else if (district["Elected Candidate"].includes("PPC")) {
+    //             seatsByRegion[province].PPC++;
+    //             seatsByRegion["Total"].PPC++;
+    //         } else if (district["Elected Candidate"].includes("Independent")) {
+    //             seatsByRegion[province].Independent++;
+    //             seatsByRegion["Total"].Independent++;
+    //         }
+    //         seatsByRegion[province].Total++;
+    //         seatsByRegion["Total"].Total++;
+    //     });
+    
+    //     let fixedYDomain = Object.entries(seatsByRegion["Total"])
+    //         .filter(([party, count]) => party !== "Total" && count > 0)
+    //         .map(([party]) => party);
+    
+    //     return { seatsByRegion, fixedYDomain };
+    // }, [resultByDistrict]);
+
+    let selectedProvince = provinceNameTable[selectedRegion];
+
+    
+    const {selectedRegionVote } = React.useMemo(() => {
+        //let selectedRegionSeats = seatsByRegion[selectedProvince];
+        let selectedRegionVote = voteByRegion[selectedRegion];
+        //console.log(selectedRegionSeats)
+        return {selectedRegionVote};
+    }, [selectedRegion, voteByRegion]);
+
+
+    // Calculate historical Seat Results
+    const seatsByRegionOverTime = React.useMemo(() => {
+        const result = {};
+
+        // Initialize result structure
+        provinces.forEach(prov => result[prov] = {});
+
+        Object.entries(allResultsByDistrict).forEach(([year, districtResults]) => {
+
+            // Initialize each province for this year
+            provinces.forEach(prov => {
+            result[prov][year] = {
                 Conservative: 0,
                 Liberal: 0,
                 NDP: 0,
                 Bloc: 0,
                 Green: 0,
-                PPC: 0,
-                Independent: 0
+                Independent: 0,
+                Total: 0
             };
-        });
-    
-        resultByDistrict.forEach(district => {
-            let province = district.Province;
-            if (district["Elected Candidate"].includes("Conservative")) {
-                seatsByRegion[province].Conservative++;
-                seatsByRegion["Total"].Conservative++;
-            } else if (district["Elected Candidate"].includes("Liberal")) {
-                seatsByRegion[province].Liberal++;
-                seatsByRegion["Total"].Liberal++;
-            } else if (district["Elected Candidate"].includes("NDP")) {
-                seatsByRegion[province].NDP++;
-                seatsByRegion["Total"].NDP++;
-            } else if (district["Elected Candidate"].includes("Bloc")) {
-                seatsByRegion[province].Bloc++;
-                seatsByRegion["Total"].Bloc++;
-            } else if (district["Elected Candidate"].includes("Green")) {
-                seatsByRegion[province].Green++;
-                seatsByRegion["Total"].Green++;
-            } else if (district["Elected Candidate"].includes("PPC")) {
-                seatsByRegion[province].PPC++;
-                seatsByRegion["Total"].PPC++;
-            } else if (district["Elected Candidate"].includes("Independent")) {
-                seatsByRegion[province].Independent++;
-                seatsByRegion["Total"].Independent++;
+            });
+
+            districtResults.forEach(d => {
+            const prov = d.Province;
+            const elected = d["Elected Candidate"];
+            let partyKey = null;
+
+            if (elected.includes("Conservative")) partyKey = "Conservative";
+            else if (elected.includes("Liberal")) partyKey = "Liberal";
+            else if (elected.includes("NDP")) partyKey = "NDP";
+            else if (elected.includes("Bloc")) partyKey = "Bloc";
+            else if (elected.includes("Green")) partyKey = "Green";
+            else if (elected.includes("Independent")) partyKey = "Independent";
+
+            if (partyKey && result[prov][year]) {
+                result[prov][year][partyKey]++;
+                result[prov][year].Total++;
+                result["Total"][year][partyKey]++;
+                result["Total"][year].Total++;
             }
-            seatsByRegion[province].Total++;
-            seatsByRegion["Total"].Total++;
+            });
         });
-    
-        let fixedYDomain = Object.entries(seatsByRegion["Total"])
+
+        return result;
+    }, [allResultsByDistrict]);
+
+    let selectedSeats = seatsByRegionOverTime[selectedProvince][selectedElection];
+    let fixedYDomain = Object.entries(seatsByRegionOverTime["Total"][selectedElection])
             .filter(([party, count]) => party !== "Total" && count > 0)
             .map(([party]) => party);
     
-        return { seatsByRegion, fixedYDomain };
-    }, [resultByDistrict]);
 
-    let selectedProvince = provinceNameTable[selectedRegion];
+    const transformSeatData = (rawData) => {
+        return Object.entries(rawData).map(([year, parties]) => {
+            const entry = { election: year };
+            for (const party in parties) {
+            if (party !== "Total") {
+                entry[party] = parties[party];
+            }
+            }
+            return entry;
+        });
+    };
 
-    
-    const { selectedRegionSeats, selectedRegionVote } = React.useMemo(() => {
-        let selectedRegionSeats = seatsByRegion[selectedProvince];
-        let selectedRegionVote = voteByRegion[selectedRegion];
-        return {selectedRegionSeats, selectedRegionVote};
-    }, [selectedRegion, seatsByRegion, voteByRegion]);
+    const formattedData = transformSeatData(seatsByRegionOverTime[selectedProvince]);
+
 
     function chartButtonHandler() {
         setChartType(prev => prev === "barChart" ? "pieChart" : "barChart");
     }
 
-    const isDataReady = resultByDistrict.length > 0 && numberOfVoteByRegion.length > 0 && percentageOfVoteByRegion.length > 0;
+    const isDataReady = resultByDistrict.length > 0 && numberOfVoteByRegion.length > 0 && percentageOfVoteByRegion.length > 0 && Object.keys(allResultsByDistrict).length > 0;
+
 
     if (!isDataReady) {
     return <p>Loading...</p>;
@@ -201,18 +274,23 @@ export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVo
                     </button>
                 </div>
             </div>
-            <div id="overviewChart">
-                <RegionSeatBarChart 
-                    fixedYDomain={fixedYDomain}
-                    selectedRegionSeats={selectedRegionSeats}
-                    selectedRegion={selectedRegion}
-                    chartType={chartType}
-                />
-                <RegionVoteBarChart 
-                    selectedRegionVote={selectedRegionVote}
-                    selectedRegion={selectedRegion}
-                    chartType={chartType}
-                />
+            <div id="regionalView">
+                <div id="chartTitleRow">
+                    <h5>Seats – {selectedRegion}</h5>
+                    <h5>Popular Vote – {selectedRegion}</h5>
+                </div>
+                <div id="overviewChart">
+                    <RegionSeatChart 
+                        fixedYDomain={fixedYDomain}
+                        selectedRegion={selectedRegion}
+                        selectedRegionSeats={selectedSeats}
+                        chartType={chartType}
+                    />
+                    <RegionVoteChart 
+                        selectedRegionVote={selectedRegionVote}
+                        chartType={chartType}
+                    />
+                </div>
             </div>
             {showDetails &&
                 <DetailModal 
@@ -223,5 +301,11 @@ export const Overview = ({resultByDistrict, percentageOfVoteByRegion, numberOfVo
             <button onClick={() => setShowDetails(!showDetails)} style={{ marginTop: "20px" }}>
               {showDetails ? "Less Details": "More Details"}
             </button>
+            <div>
+                <HistoricalSeats
+                    data={formattedData}
+                />
+            </div>
+            
         </>);
 }

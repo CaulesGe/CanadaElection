@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-const margin = { top: 70, right: 20, bottom: 100, left: 120 };
+const margin = { top: 20, right: 20, bottom: 100, left: 100 };
 const width = 600 - margin.left - margin.right;
 const height = 550 - margin.top - margin.bottom;
 
@@ -16,22 +16,23 @@ function getPartyColor(candidateData) {
     return "#808080";
 }
 
-export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selectedRegion, chartType}) => {
+export const RegionSeatChart = ({ fixedYDomain, selectedRegionSeats, selectedRegion, chartType}) => {
     const svgRef = useRef();
 
     useEffect(() => {    
-        renderChart(svgRef, fixedYDomain, selectedRegionSeats, selectedRegion, chartType);
-    }, [fixedYDomain, selectedRegionSeats, selectedRegion, chartType]);
+        if (!selectedRegionSeats) return; // prevent rendering if data is missing
+        renderChart(svgRef, fixedYDomain, selectedRegionSeats, chartType);
+    }, [fixedYDomain, selectedRegionSeats, chartType]);
 
 
-    function renderChart(svgRef, fixedYDomain, selectedRegionSeats, selectedRegion, chartType) {
+    function renderChart(svgRef, fixedYDomain, selectedRegionSeats, chartType) {
         const svg = d3.select(svgRef.current);
         svg.selectAll("*").remove(); // clear previous render
 
         if (chartType === 'barChart') {
             renderRegionBarChart(svg, fixedYDomain, selectedRegionSeats, selectedRegion);
         } else if (chartType === 'pieChart') {
-            renderRegionPieChart(svg, fixedYDomain, selectedRegionSeats, selectedRegion);
+            renderRegionPieChart(svg, fixedYDomain, selectedRegionSeats);
         }
     }
 
@@ -89,16 +90,6 @@ export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selected
     
         bars.exit()
             .remove();
-        
-
-        //title
-        g.append("text")
-            .attr("class", "title")
-            .attr("x", width / 2)
-            .attr("y", -30)
-            .attr("text-anchor", "middle")
-            .style("font-size", "17px")
-            .text(`Seats – ${selectedRegion}`);
             
         // Labels
         const labels = g.selectAll(".text")
@@ -155,7 +146,7 @@ export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selected
     }
     
 
-    function renderRegionPieChart(svg, fixedYDomain, selectedRegionSeats, selectedRegion) {
+    function renderRegionPieChart(svg, fixedYDomain, selectedRegionSeats) {
         const width = 600;
         const height = 360;
         const radius = Math.min(width, height) / 2;
@@ -172,7 +163,7 @@ export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selected
             .attr("width", width + 100)
             .attr("height", height + 100)
             .append("g")
-            .attr("transform", `translate(${width / 2 + 20},${height / 2 + 80})`);
+            .attr("transform", `translate(${width / 2 + 20},${height / 2 + 50})`);
 
         const arcs = g.selectAll(".arc")
             .data(pie(data))
@@ -236,13 +227,7 @@ export const RegionSeatBarChart = ({ fixedYDomain, selectedRegionSeats, selected
             .style("font-size", "11px")
             .text(d => `${d.data.party}: ${d.data.value}`);
 
-        // Add title
-        g.append("text")
-            .attr("class", "title")
-            .attr("y", -radius - 40)
-            .attr("text-anchor", "middle")
-            .style("font-size", "16px")
-            .text(`Seats – ${selectedRegion}`);
+
     }
 
 

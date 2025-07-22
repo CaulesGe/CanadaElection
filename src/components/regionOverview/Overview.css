@@ -74,16 +74,33 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+#regionalView {
+  display: flex;
+  flex-direction: column;
+  background-color:hsla(0, 0%, 83%, 0.237);
+  margin-top: 2%;
+}
+
+#chartTitleRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* pushes elements to far ends */
+  align-items: center;            /* optional: vertically center them */
+  margin-top: 30px;
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
 #overviewChart {
   display: flex;
   flex-direction: row;
-  margin-top: 30px;
-  background-color:hsla(0, 0%, 83%, 0.237);
   margin-left: 5%;
   margin-right: 5%;
   border-radius: 1pc;
   height: 100%;
 }
+
+
 
 /* Optional: make charts stack on small screens */
 @media (min-width: 768px) {

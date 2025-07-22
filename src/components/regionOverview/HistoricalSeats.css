@@ -1,0 +1,9 @@
+
+#historicalSeatTooltip {
+  background-color: white;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}

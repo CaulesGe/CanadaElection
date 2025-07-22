@@ -44,8 +44,8 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
     const [geoData20022012, setGeoData20022012] = useState(null);
     const [geoData20132023, setGeoData20132023] = useState(null);
 
-    const electionsAfter2013 = new Set(["42ndCA2015", "43rdCA2019", "44thCA2021"]);
-    const electionsBefore2013 = new Set(["39thCA2006", "40thCA2008", "41thCA2011"]);
+    const electionsAfter2013 = new Set([2015, 2019, 2021]);
+    const electionsBefore2013 = new Set([2006, 2008, 2011]);
 
     const candidatesByRiding = useMemo(() => {
         return Array.from(
@@ -61,8 +61,8 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
     useEffect(() => {
         const loadGeoData = async () => {
             const [data20132023, data20022012] = await Promise.all([
-            d3.json("data/44thCA2021/riding.geojson"),
-            d3.json("data/41stCA2011/riding.geojson")
+            d3.json("data/2021/riding.geojson"),
+            d3.json("data/2011/riding.geojson")
             ]);
             setGeoData20132023(data20132023);
             setGeoData20022012(data20022012);

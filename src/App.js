@@ -8,17 +8,18 @@ import { Helmet } from 'react-helmet';
 
 function App() {
   const [candidatesByRiding, setCandidatesByRiding] = useState([]);
-  const [resultByDistrict, setResultByDistrict] = useState([]);
+  //const [resultByDistrict, setResultByDistrict] = useState([]);
+  const [allResultsByDistrict, setAllResultsByDistrict] = useState(null);
   const [percentageOfVoteByRegion, setPercentageOfVoteByRegion] = useState([]);
   const [numberOfVoteByRegion, setNumberOfVoteByRegion] = useState([]);
-  const [selectedElection, setSelectedElection] = useState('44thCA2021');
+  const [selectedElection, setSelectedElection] = useState('2021');
 
   useEffect(() => {
     d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/allCandidatesResult.json`)
       .then(data => setCandidatesByRiding(data));
 
-    d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/resultByDistrict.json`)
-      .then(data => setResultByDistrict(data));
+    // d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/resultByDistrict.json`)
+    //   .then(data => setResultByDistrict(data));
 
     d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/percentageOfVoteByRegion.json`)
       .then(data => setPercentageOfVoteByRegion(data));
@@ -26,6 +27,35 @@ function App() {
     d3.json(`${process.env.PUBLIC_URL}/data/${selectedElection}/numberOfVoteByRegion.json`)
       .then(data => setNumberOfVoteByRegion(data));
   }, [selectedElection]);
+
+  useEffect(() => {
+    const files = [
+        2004,
+        2006,
+        2008,
+        2011,
+        2015,
+        2019,
+        2021
+    ];
+
+    Promise.all(
+      files.map(election =>
+        d3.json(`${process.env.PUBLIC_URL}/data/${election}/resultByDistrict.json`)
+          .then(data => ({ election, data }))
+      )
+    ).then(results => {
+      const allResults = {};
+      results.forEach(({ election, data }) => {
+        allResults[election] = data;
+      });
+      setAllResultsByDistrict(allResults);
+    });
+  }, []);
+
+  if (!allResultsByDistrict) {
+    return;
+  }
 
   return (
     <>
@@ -44,28 +74,30 @@ function App() {
                 onChange={(e) => setSelectedElection(e.target.value)}
                 value={selectedElection}
               >
-                <option value="44thCA2021">44th Federal Election - 2021</option>
-                <option value="43rdCA2019">43rd Federal Election - 2019</option>
-                <option value="42ndCA2015">42nd Federal Election - 2015</option>
-                <option value="41stCA2011">41st Federal Election - 2011</option>
-                <option value="40thCA2008">40th Federal Election - 2008</option>
-                <option value="39thCA2006">39th Federal Election - 2006</option>
-                <option value="38thCA2004">38th Federal Election - 2004</option>
+                <option value="2021">44th Federal Election - 2021</option>
+                <option value="2019">43rd Federal Election - 2019</option>
+                <option value="2015">42nd Federal Election - 2015</option>
+                <option value="2011">41st Federal Election - 2011</option>
+                <option value="2008">40th Federal Election - 2008</option>
+                <option value="2006">39th Federal Election - 2006</option>
+                <option value="2004">38th Federal Election - 2004</option>
               </select>
             </div>
 
             <div id="overview">
               <Overview
-                resultByDistrict={resultByDistrict}
+               
+                allResultsByDistrict={allResultsByDistrict}
                 percentageOfVoteByRegion={percentageOfVoteByRegion}
                 numberOfVoteByRegion={numberOfVoteByRegion}
                 selectedElection={selectedElection}
+
               />
             </div>
 
             <MapController
               resultByRiding={candidatesByRiding}
-              resultByDistrict={resultByDistrict}
+              resultByDistrict={allResultsByDistrict[selectedElection]}
               selectedElection={selectedElection}
             />
           </div>

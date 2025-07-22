@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 
-const margin = { top: 70, right: 20, bottom: 100, left: 120 };
+const margin = { top: 20, right: 20, bottom: 100, left: 100 };
 const width = 600 - margin.left - margin.right;
 const height = 550 - margin.top - margin.bottom;
 
@@ -37,7 +37,7 @@ function getPartyName(party) {
     }
 }
 
-export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion, chartType}) => {
+export const RegionVoteChart = ({selectedRegionVote, chartType}) => {
     const svgRef = useRef();
 
     useEffect(() => {    
@@ -47,21 +47,21 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion, chartTyp
             .filter(d => d.percentageOfVote > 1)
             .sort((a, b) => b.percentageOfVote - a.percentageOfVote)
             .slice(0, 6); // filter out parties with less than 1% of the vote and limit to top 6 parties
-        renderChart(svgRef, filteredPartyData, selectedRegion);
-    }, [selectedRegionVote, selectedRegion, chartType]);
+        renderChart(svgRef, filteredPartyData);
+    }, [selectedRegionVote, chartType]);
 
-    function renderChart(svgRef, filteredPartyData, selectedRegion) {
+    function renderChart(svgRef, filteredPartyData) {
         const svg = d3.select(svgRef.current);
         svg.selectAll("*").remove(); // clear previous render
 
         if (chartType === 'barChart') {
-            renderRegionBarChart(svg, filteredPartyData, selectedRegion);
+            renderRegionBarChart(svg, filteredPartyData);
         } else if (chartType === 'pieChart') {
-            renderRegionPieChart(svg, filteredPartyData, selectedRegion);
+            renderRegionPieChart(svg, filteredPartyData);
         }
     }
 
-    function renderRegionBarChart(svg, filteredPartyData, selectedRegion) {
+    function renderRegionBarChart(svg, filteredPartyData) {
         const g = svg
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -145,15 +145,6 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion, chartTyp
             d3.select(this).attr("fill", getPartyColor(d.party));
             tooltip.style("display", "none");
         });
-
-        //title
-        g.append("text")
-            .attr("class", "title")
-            .attr("x", width / 2)
-            .attr("y", -30)
-            .attr("text-anchor", "middle")
-            .style("font-size", "17px")
-            .text(`Popular Vote – ${selectedRegion}`);
         
         //labels
         let labels = g.selectAll(".text")
@@ -177,7 +168,7 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion, chartTyp
 
     }
 
-    function renderRegionPieChart(svg, filteredPartyData, selectedRegion) {
+    function renderRegionPieChart(svg, filteredPartyData) {
         const width = 600;
         const height = 360;
         const radius = Math.min(width, height) / 2;
@@ -193,7 +184,7 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion, chartTyp
             .attr("width", width)
             .attr("height", height + 140)
             .append("g")
-            .attr("transform", `translate(${width / 2},${height / 2 + 80})`);
+            .attr("transform", `translate(${width / 2},${height / 2 + 50})`);
 
         const pie = d3.pie().value(d => d.value);
         const arc = d3.arc().innerRadius(0).outerRadius(radius);
@@ -245,13 +236,6 @@ export const RegionVoteBarChart = ({selectedRegionVote, selectedRegion, chartTyp
                 tooltip.style("display", "none");
             });
 
-        // Title
-        g.append("text")
-            .attr("class", "title")
-            .attr("y", -radius - 40)
-            .attr("text-anchor", "middle")
-            .style("font-size", "17px")
-            .text(`Popular Vote – ${selectedRegion}`);
     }
 
 

@@ -26,6 +26,7 @@ export const RegionSeatChart = ({ fixedYDomain, selectedRegionSeats, selectedReg
 
 
     function renderChart(svgRef, fixedYDomain, selectedRegionSeats, chartType) {
+        if (!selectedRegionSeats || !Array.isArray(fixedYDomain)) return;
         const svg = d3.select(svgRef.current);
         svg.selectAll("*").remove(); // clear previous render
 
@@ -230,6 +231,9 @@ export const RegionSeatChart = ({ fixedYDomain, selectedRegionSeats, selectedReg
 
     }
 
+    if (!selectedRegionSeats || Object.keys(selectedRegionSeats).length === 0) {
+        return <></>;
+    }
 
     return (
         <>

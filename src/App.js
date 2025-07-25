@@ -4,14 +4,16 @@ import { Overview } from './components/regionOverview/Overview';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import * as d3 from 'd3';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 function App() {
   const [candidatesByRiding, setCandidatesByRiding] = useState([]);
   //const [resultByDistrict, setResultByDistrict] = useState([]);
   const [allResultsByDistrict, setAllResultsByDistrict] = useState(null);
   const [percentageOfVoteByRegion, setPercentageOfVoteByRegion] = useState([]);
+  const [allPercentageOfVoteByRegion, setAllPercentageOfVoteByRegion] = useState(null);
   const [numberOfVoteByRegion, setNumberOfVoteByRegion] = useState([]);
+  const [allNumberOfVoteByRegion, setAllNumberOfVoteByRegion] = useState(null);
   const [selectedElection, setSelectedElection] = useState('2021');
 
   useEffect(() => {
@@ -39,6 +41,7 @@ function App() {
         2021
     ];
 
+    // load all resultByDistrict.json
     Promise.all(
       files.map(election =>
         d3.json(`${process.env.PUBLIC_URL}/data/${election}/resultByDistrict.json`)
@@ -51,23 +54,51 @@ function App() {
       });
       setAllResultsByDistrict(allResults);
     });
+
+    // load all percentageOfVoteByRegion
+    Promise.all(
+      files.map(election =>
+        d3.json(`${process.env.PUBLIC_URL}/data/${election}/percentageOfVoteByRegion.json`)
+          .then(data => ({ election, data }))
+      )
+    ).then(results => {
+      const allResults = {};
+      results.forEach(({ election, data }) => {
+        allResults[election] = data;
+      });
+      setAllPercentageOfVoteByRegion(allResults);
+    });
+
+    // load all numberOfVoteByRegion
+    Promise.all(
+      files.map(election =>
+        d3.json(`${process.env.PUBLIC_URL}/data/${election}/numberOfVoteByRegion.json`)
+          .then(data => ({ election, data }))
+      )
+    ).then(results => {
+      const allResults = {};
+      results.forEach(({ election, data }) => {
+        allResults[election] = data;
+      });
+      setAllNumberOfVoteByRegion(allResults);
+    });
+
   }, []);
 
-  if (!allResultsByDistrict) {
+  if (!allResultsByDistrict || !allPercentageOfVoteByRegion || !allNumberOfVoteByRegion) {
     return;
   }
 
   return (
     <>
-      {/* <Helmet>
+      <Helmet>
         <title>Canada Election Map Viewer</title>
         <meta name="description" content="Interactive map to explore Canadian federal election results by riding and party." />
-      </Helmet> */}
+      </Helmet>
       <div className="App">
         <header className="App-header">
           <div className="container-fluid">
             <h1 className="title">Canada Election - {selectedElection}</h1>
-            
             <div id="electionSelector" className="mb-4">
               <select
                 className="form-select w-auto"
@@ -89,12 +120,13 @@ function App() {
                
                 allResultsByDistrict={allResultsByDistrict}
                 percentageOfVoteByRegion={percentageOfVoteByRegion}
+                allPercentageOfVoteByRegion={allPercentageOfVoteByRegion}
                 numberOfVoteByRegion={numberOfVoteByRegion}
+                allNumberOfVoteByRegion={allNumberOfVoteByRegion}
                 selectedElection={selectedElection}
 
               />
             </div>
-
             <MapController
               resultByRiding={candidatesByRiding}
               resultByDistrict={allResultsByDistrict[selectedElection]}

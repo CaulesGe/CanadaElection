@@ -44,8 +44,8 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
     const [geoData20022012, setGeoData20022012] = useState(null);
     const [geoData20132023, setGeoData20132023] = useState(null);
 
-    const electionsAfter2013 = new Set([2015, 2019, 2021]);
-    const electionsBefore2013 = new Set([2006, 2008, 2011]);
+    const electionsAfter2013 = new Set(["2015", "2019", "2021"]);
+    const electionsBefore2013 = new Set(["2006", "2008", "2011"]);
 
     const candidatesByRiding = useMemo(() => {
         return Array.from(
@@ -61,8 +61,8 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
     useEffect(() => {
         const loadGeoData = async () => {
             const [data20132023, data20022012] = await Promise.all([
-            d3.json("data/2021/riding.geojson"),
-            d3.json("data/2011/riding.geojson")
+              d3.json("data/2021/riding.geojson"),
+              d3.json("data/2011/riding.geojson")
             ]);
             setGeoData20132023(data20132023);
             setGeoData20022012(data20022012);
@@ -88,7 +88,6 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
 
     useEffect(() => {
       if (!geoData20132023 || !geoData20022012) return;
-
       const config = electionsAfter2013.has(selectedElection)
         ? electionMapConfig.after2013
         : electionMapConfig.before2013;
@@ -100,7 +99,7 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
 
 
     useEffect(() => {
-        if (!mapContainerRef.current || !geoData || !electionData || !electionData.length || mapInstanceRef.current) return;
+        if (!geoData || !electionData || !electionData.length) return;
         
         renderRidings(geoData);
         // Clean up on unmount
@@ -144,10 +143,18 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
         mapRef.current = {
           map,
           zoomToRiding: (districtNumber) => {
-            const match = features.find(f => f.properties[federalCode] == districtNumber);
+            const match = features.find(
+              f => String(f.properties[federalCode]) === String(districtNumber)
+            );
+
+            
             if (match) {
               const bounds = L.geoJSON(match.geometry).getBounds();
-              map.flyToBounds(bounds, { padding: [20, 20] });
+              map.flyToBounds(bounds, {
+                padding: [20, 20],
+                duration: 0.4,           // default is 1.0 (in seconds) — smaller means faster
+                easeLinearity: 1.0       // higher value makes animation more direct (less easing)
+              });
               handleRidingClick(match); // simulate click
             } else {
               console.warn("No geometry found for district:", districtNumber);
@@ -191,7 +198,7 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
         // });
         // Zoom/move redraw
         map.on('zoomend moveend', () => {
-        ridings.attr('d', path);
+          ridings.attr('d', path);
         });
     
         // Initial hover and click events
@@ -225,7 +232,7 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
         function handleRidingClick(d, event = null) {
           if (selectedRidingRef.current === d) {
             selectedRidingRef.current = null;
-            g.selectAll('path').filter(pathD => pathD === d)
+            g.selectAll('path').filter(pathD => pathD == d)
               .transition().duration(300)
               .attr('fill-opacity', () => {
                 const code = d.properties[federalCode];
@@ -239,7 +246,7 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
           if (selectedRidingRef.current) {
             const prevCode = selectedRidingRef.current.properties[federalCode];
             g.selectAll('path')
-              .filter(prevD => prevD.properties[federalCode] === prevCode)
+              .filter(prevD => prevD.properties[federalCode] == prevCode)
               .transition().duration(350)
               .attr('fill-opacity', () => {
                 const prev = candidatesByRiding.find(c => c.key == prevCode);
@@ -265,7 +272,7 @@ export const ElectionMap = ({ mapRef, selectedElection , electionData, setSelect
       
     }
     
-    if (!geoData || !electionData.length) {
+    if (!geoData || !electionData || !electionData.length) {
         return <div>Loading map...</div>;
     }
 

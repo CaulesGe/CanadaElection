@@ -13,18 +13,6 @@ export const MapController = ({resultByRiding, resultByDistrict, selectedElectio
     const mapRef = useRef(null);
    // const [searchSuggestions, setSearchSuggestions] = useState([]);
     const [selectedCandidates, setSelectedCandidates] = useState([]);
-   // const [geoData, setGeoData] = useState(null);
-
-    // useEffect(() => {
-    //     console.log(selectedElection);
-    //     if (electionsAfter2013.includes(selectedElection)) {
-    //         d3.json('data/44thCA2021/riding.geojson').then(data => setGeoData(data));
-    //         console.log("after2013");
-    //     } else {
-    //         d3.json('data/41stCA2011/riding.geojson').then(data => setGeoData(data));
-    //         console.log("before2013");
-    //     }
-    // }, [selectedElection]);
 
     const candidatesByRiding = Array.from(
         d3.group(resultByRiding, d => d["Electoral District Number"]),

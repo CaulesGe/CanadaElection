@@ -39,14 +39,16 @@ function getPartyName(party) {
 
 export const RegionVoteChart = ({selectedRegionVote, chartType}) => {
     const svgRef = useRef();
-
+   // console.log(selectedRegionVote)
     useEffect(() => {    
-        if (!selectedRegionVote || !Array.isArray(selectedRegionVote)) return;
+        if (!selectedRegionVote ) return;
 
-        let filteredPartyData = [...selectedRegionVote]
+        let filteredPartyData = Object.values(selectedRegionVote)
             .filter(d => d.percentageOfVote > 1)
             .sort((a, b) => b.percentageOfVote - a.percentageOfVote)
             .slice(0, 6); // filter out parties with less than 1% of the vote and limit to top 6 parties
+
+        //console.log(filteredPartyData)
         renderChart(svgRef, filteredPartyData);
     }, [selectedRegionVote, chartType]);
 

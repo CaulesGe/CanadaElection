@@ -1,30 +1,33 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
-import { HistoricalSeatsTable } from './HistoricalSeatsTable';
+import { HistoricalVoteTable } from './HistoricalVoteTable';
 import './HistoricalSeats.css'
 
-const margin = { top: 40, right: 120, bottom: 50, left: 60 };
+const margin = { top: 40, right: 220, bottom: 50, left: 60 };
 const width = 1100 - margin.left - margin.right;
 const height = 400 - margin.top - margin.bottom;
 
-// Color mapping for parties
-const partyColor = {
-  Liberal: "#D71920",
-  Conservative: "#1A4782",
-  NDP: "#F37021",
-  Bloc: "#009EE0",
-  Green: "#3D9B35"
-};
 
+function getPartyColor(party) {
+  if (party.includes("Liberal")) return "#D71920";
+  if (party.includes("Conservative")) return "#1A4782";
+  if (party.includes("New Democratic Party")) return "#F37021";
+  if (party.includes("Bloc")) return "#009EE0";
+  if (party.includes("Green")) return "#3D9B35";
+  if (party.includes("People's Party")) return "#800080";
+  if (party.includes("Independent")) return "#808080";
+  return "#888"; // fallback gray
+}
 
-
-export const HistoricalSeats = ({ data }) => {
+export const HistoricalVote = ({ data }) => {
+  //console.log(data)
   const svgRef = useRef();
   const tooltipRef = useRef();
   const [selectedElectionData, setSelectedElectionData] = useState(null);
   const [year, setYear] = useState(null);
   const [parties, setParties] = useState(null);
 
+  //console.log(data)
 
   useEffect(() => {
     if (!tooltipRef.current) {
@@ -52,21 +55,27 @@ export const HistoricalSeats = ({ data }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-   // console.log(data);
-    const parties = Object.keys(data[0]).filter(key => key !== "election");
-   // console.log(data[0])
+  
+
+    const parties = ["Bloc Québécois", "Conservative Party of Canada", "Green Party of Canada",
+      "Liberal Party of Canada", "New Democratic Party", "People's Party of Canada", "Independent"
+    ];
     setParties(parties);
 
     const x = d3
       .scalePoint()
-      .domain(data.map(d => d.election))
+      .domain(Object.keys(data))
       .range([0, width]);
+    
 
+    const allVotes = Object.values(data).flatMap(yearData =>
+      Object.values(yearData)
+    );
     const y = d3
       .scaleLinear()
       .domain([
         0,
-        d3.max(data, d => d3.max(parties, party => d[party])) || 200
+        d3.max(allVotes, d => +d.numberOfVote)
       ])
       .nice()
       .range([height, 0]);
@@ -87,17 +96,31 @@ export const HistoricalSeats = ({ data }) => {
 
     // Draw one line per party
     parties.forEach(party => {
-      const partyData = data.map(d => ({ election: d.election, value: d[party] }));
+      const partyData = Object.entries(data).map(([election, yearData]) => {
+        if (party in yearData) {
+          const partyEntry = yearData[party];
+          return {
+            election,
+            value: partyEntry ? +partyEntry.numberOfVote : 0
+          };
+        }  
+        return null;
+      }).filter(d => d !== null);
 
       g.append("path")
         .datum(partyData)
         .attr("fill", "none")
-        .attr("stroke", partyColor[party] || "gray")
+        .attr("stroke", getPartyColor(party) || "gray")
         .attr("stroke-width", 2)
         .attr("d", line);
 
+      function sanitizeClassName(name) {
+        return name.replace(/[^a-z0-9]/gi, '-');
+      }
+
+      const safePartyClass = sanitizeClassName(party);
       // Add points
-      g.selectAll(`.dot-${party}`)
+      g.selectAll(`.dot-${safePartyClass}`)
         .data(partyData)
         .enter()
         .append("circle")
@@ -105,7 +128,7 @@ export const HistoricalSeats = ({ data }) => {
         .attr("cx", d => x(d.election))
         .attr("cy", d => y(d.value))
         .attr("r", 3)
-        .attr("fill", partyColor[party]);
+        .attr("fill", getPartyColor(party));
     });
 
     // Legend
@@ -122,7 +145,7 @@ export const HistoricalSeats = ({ data }) => {
         .append("rect")
         .attr("width", 12)
         .attr("height", 12)
-        .attr("fill", partyColor[party]);
+        .attr("fill", getPartyColor(party));
 
       legendRow
         .append("text")
@@ -148,14 +171,6 @@ export const HistoricalSeats = ({ data }) => {
       .attr("stroke-width", 2)
       .attr("y1", 0)
       .attr("y2", height);
-  
-    const focusCircles = parties.map(party =>
-      focus.append("circle")
-        .attr("r", 4)
-        .attr("fill", partyColor[party])
-        .style("pointer-events", "none")
-    );
-
 
     g.append("rect")
       .attr("class", "overlay")
@@ -170,6 +185,13 @@ export const HistoricalSeats = ({ data }) => {
       })
       .on("mousemove", onMouseMove);
     
+
+    // const focusCircles = parties.map(party =>
+    //   focus.append("circle")
+    //     .attr("r", 4)
+    //     .attr("fill", partyColor[party])
+    //     .style("pointer-events", "none")
+    // );
 
     function onMouseMove(event) {
       const [xm] = d3.pointer(event);
@@ -187,26 +209,27 @@ export const HistoricalSeats = ({ data }) => {
       focus.select(".focus-line").attr("x1", dx).attr("x2", dx);
 
       // Move and enlarge circles
-      parties.forEach((party, j) => {
-        const d = data[i];
-        focusCircles[j]
-          .attr("cx", dx)
-          .attr("cy", y(d[party]));
-      });
 
-      setSelectedElectionData(data[i]);
+      // parties.forEach((party, j) => {
+      //   const d = data[i];
+      //   focusCircles[j]
+      //     .attr("cx", dx)
+      //     .attr("cy", y(d[party]));
+      // });
+      
+      setSelectedElectionData(Object.values(data)[i]);
 
       // Show tooltip
-      const [mouseX, mouseY] = d3.pointer(event, document.body);
+    //   const [mouseX, mouseY] = d3.pointer(event, document.body);
 
-      tooltip
-        .html(
-          ` <strong>${election}111</strong><br>` +
-          parties.map(party => `${party}: ${data[i][party]}`).join("<br>")
-        )
-        .style("left", mouseX + 10 + "px")
-        .style("top", mouseY - 40 + "px")
-        .style("display", "block");
+    //   tooltip
+    //     .html(
+    //       ` <strong>${election}111</strong><br>` +
+    //       parties.map(party => `${party}: ${data[i][party]}`).join("<br>")
+    //     )
+    //     .style("left", mouseX + 10 + "px")
+    //     .style("top", mouseY - 40 + "px")
+    //     .style("display", "block");
     }
   };
 
@@ -214,7 +237,7 @@ export const HistoricalSeats = ({ data }) => {
     <>
       <svg ref={svgRef} />
       { year && parties &&
-        <HistoricalSeatsTable
+        <HistoricalVoteTable
           selectedElectionData={selectedElectionData}
           year={year}
           parties={parties}

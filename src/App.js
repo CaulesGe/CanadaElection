@@ -4,7 +4,7 @@ import { Overview } from './components/regionOverview/Overview';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import * as d3 from 'd3';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
 function App() {
   const [candidatesByRiding, setCandidatesByRiding] = useState([]);

@@ -5,7 +5,7 @@ import { DetailModal } from "./DetailModal";
 import { FederalResult } from "./FederalResult";
 import { HistoricalSeats } from "./HistoricalSeats";
 import { HistoricalVote } from "./HistoricalVote";
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 import './Overview.css';
 
 export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, allNumberOfVoteByRegion, percentageOfVoteByRegion, numberOfVoteByRegion, selectedElection}) => {

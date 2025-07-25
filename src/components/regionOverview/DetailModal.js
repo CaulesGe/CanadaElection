@@ -13,7 +13,7 @@ export const DetailModal = ({ selectedRegionVote, selectedRegion }) => {
           </tr>
         </thead>
         <tbody>
-          {selectedRegionVote.map((party, idx) => (
+          {Object.values(selectedRegionVote).sort((a, b) => b.numberOfVote - a.numberOfVote).map((party, idx) => (
             <tr key={idx}>
               <td>{party.party}</td>
               <td>{party.numberOfVote.toLocaleString()}</td>

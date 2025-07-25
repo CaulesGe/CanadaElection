@@ -41,7 +41,7 @@ export const ElectionMap20132023 = ({ mapRef, electionData, setSelectedCandidate
   const [geoData, setGeoData] = useState(null);
 
   useEffect(() => {
-    d3.json(`data/44thCA2021/riding.geojson`).then(data => setGeoData(data));
+    d3.json(`data/2021/riding.geojson`).then(data => setGeoData(data));
   }, [])
 
   useEffect(() => {

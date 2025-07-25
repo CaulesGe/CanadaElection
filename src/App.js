@@ -86,20 +86,49 @@ function App() {
   }, []);
 
   if (!allResultsByDistrict || !allPercentageOfVoteByRegion || !allNumberOfVoteByRegion) {
-    return;
+    return <div style={{ textAlign: "center", marginTop: "3rem" }}>Loading election data...</div>;
   }
+
 
   return (
     <>
       <Helmet>
-        <title>Canada Election Map Viewer</title>
-        <meta name="description" content="Interactive map to explore Canadian federal election results by riding and party." />
+        <title>Interactive Canada Election Viewer 2004–2021 by Riding</title>
+        <meta
+          name="description"
+          content="Visualize Canadian federal election results from 2004 to 2021 by riding and party. Search for ridings, compare seat counts and vote shares."
+        />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Interactive Canada Election Viewer 2004–2021 by Riding" />
+        <meta property="og:description" content="Explore federal election results by riding and region with interactive maps and charts." />
+        <meta property="og:image" content="https://canelectionview.com/leaf.png" />
+        <meta property="og:url" content="https://canelectionview.com" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <link rel="canonical" href="https://canelectionview.com/" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Canada Election Map",
+            "url": "https://canelectionview.com",
+            "description": "Interactive map showing Canadian federal election results (2004–2021) by riding."
+          })}
+        </script>
       </Helmet>
       <div className="App">
         <header className="App-header">
           <div className="container-fluid">
-            <h1 className="title">Canada Election - {selectedElection}</h1>
+            <div className="intro" style={{ padding: "1rem" }}>
+              <h1>Canada Federal Election Viewer (2004–2021)</h1>
+              <p id='about'>
+                Explore Canadian federal election results by riding and region. Search by riding name or number, hover over each riding to see vote percentages, and view historical trends by party and region.
+              </p>
+            </div>
+            <h2 id='electionTitle'>Canada Election - {selectedElection}</h2>
             <div id="electionSelector" className="mb-4">
+              <label htmlFor="electionSelector" style={{margin: '10px'}}>Select Election:</label>
               <select
                 className="form-select w-auto"
                 onChange={(e) => setSelectedElection(e.target.value)}

@@ -5,7 +5,6 @@ import { DetailModal } from "./DetailModal";
 import { FederalResult } from "./FederalResult";
 import { HistoricalSeats } from "./HistoricalSeats";
 import { HistoricalVote } from "./HistoricalVote";
-import { Helmet } from 'react-helmet';
 import './Overview.css';
 
 export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, allNumberOfVoteByRegion, percentageOfVoteByRegion, numberOfVoteByRegion, selectedElection}) => {
@@ -215,10 +214,6 @@ export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, all
 
     return (
         <>  
-            <Helmet>
-                <title> Regional Election Results</title>
-                <meta name="description" content={`View election results by region with pieChart and barChart, including vote shares and seats.`} />
-            </Helmet>
             {/* <p className="description" id="overviewTitle">Overview of the election result</p>  */}
             <div id="federalOverview">
                 <FederalResult 

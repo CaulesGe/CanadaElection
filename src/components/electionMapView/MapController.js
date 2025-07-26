@@ -69,7 +69,7 @@ export const MapController = ({resultByRiding, resultByDistrict, selectedElectio
                         mapRef={mapRef}
                     />
                 </div>
-                <div id="ridingBarChart" className="col-12 col-md-4">
+                <div id="ridingBarChart" className="col-12 col-md-5">
                     <RidingBarChart
                         candidates={selectedCandidates}
                     />

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import "./RegionSeatChart.css";
 
 const margin = { top: 20, right: 20, bottom: 100, left: 100 };
 const baseWidth = 600;
@@ -237,7 +238,7 @@ export const RegionSeatChart = ({ fixedYDomain, selectedRegionSeats, selectedReg
     }
 
     return (
-        <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+        <div id="regionSeatChart" style={{ width: '100%', height: '100%', margin: '0 auto' }}>
             <svg
                 ref={svgRef}
                 viewBox={`0 0 ${baseWidth} ${baseHeight}`}

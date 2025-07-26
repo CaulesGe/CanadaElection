@@ -1,7 +1,10 @@
-@media (max-width: 768px) {
-    #barChart {
+@media (max-width: 400px) {
+    #ridingChartBox {
         display: flex;
         flex-direction: column;
+        justify-content: center;
+    }
+    #barChart {
         justify-content: center;
         width: 100%;
         text-align: center;

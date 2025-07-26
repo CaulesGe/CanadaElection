@@ -1,3 +1,10 @@
+#overview {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
 #overviewTitle {
     font-size: 1.5rem;
     font-weight: bolder;
@@ -99,8 +106,13 @@
 }
 
 #detailButton {
-  margin-Top: 20px;
+  margin-top: 20px;
   margin-bottom: 20px;
+  width: 200px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 #historicalResult {
@@ -204,7 +216,7 @@ button:hover {
   background-color: #0056b3;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 425px) {
   #overviewTitle {
     margin-left: 0;
     text-align: center;
@@ -215,24 +227,38 @@ button:hover {
     display: flex;
     flex-direction: column; /* Stack children vertically */
     align-items: center; /* Align label & select to the left */
-    max-width: 400px; /* Optional: limit width */
+     /* Optional: limit width */
+    text-align: center;
+    margin: auto;
+  }
+
+  #regionSelector {
+    font-size: 1rem;
+  }
+
+  #selectorRow {
+    margin: auto;
   }
 
   #regionalView {
     display: flex;
     flex-direction: column;
     background-color:hsla(0, 0%, 83%, 0.237);
-    margin-top: 2%;
+    margin: auto;
     width: 100%;
-    margin-left: 2%;
-    margin-right: 2%;
+    
   }
   #overviewChart {
     display: flex;
     flex-direction: column;
     justify-content: center;
     width: 100%;
+    margin: auto;
   }
 
+  #historicalChart {
+    max-width: 400px;
+    width: 100%;
+  }
 
 }

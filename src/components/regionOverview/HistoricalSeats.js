@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { HistoricalSeatsTable } from './HistoricalSeatsTable';
-import './HistoricalSeats.css'
+import './HistoricalSeats.css';
 
 const margin = { top: 40, right: 120, bottom: 50, left: 60 };
 const width = 1100 - margin.left - margin.right;
@@ -211,7 +211,7 @@ export const HistoricalSeats = ({ data }) => {
   };
 
   return (
-    <>
+    <div id='historicalChart' style={{width:'100%', height:'100%'}}>
       <svg ref={svgRef} />
       { year && parties &&
         <HistoricalSeatsTable
@@ -220,7 +220,7 @@ export const HistoricalSeats = ({ data }) => {
           parties={parties}
         />
       }
-    </>);
+    </div>);
 };
 
 

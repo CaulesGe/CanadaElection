@@ -164,7 +164,7 @@ export const RidingBarChart = ({ candidates }) => {
   }, [candidates]);
 
   return (
-    <div id="barChart">
+    <div id="ridingChartBox">
       {candidates.length > 0 && (
         <div id="table">
           <h4>Province: {candidates[0]["Province"]}</h4>
@@ -172,7 +172,9 @@ export const RidingBarChart = ({ candidates }) => {
           <h4>Code: {candidates[0]["Electoral District Number"]}</h4>
         </div>
       )}
-      <svg ref={svgRef}></svg>
+      <div id="barChart">
+        <svg ref={svgRef}></svg>
+      </div>
     </div>
   );
 };

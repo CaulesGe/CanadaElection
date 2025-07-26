@@ -2,9 +2,11 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import "./RidingBarChart.css";
 
-const margin = { top: 70, right: 20, bottom: 180, left: 120 };
-const width = 600 - margin.left - margin.right;
-const height = 600 - margin.top - margin.bottom;
+const margin = { top: 20, right: 20, bottom: 100, left: 50 };
+const baseWidth = 550;
+const baseHeight = 550;
+const width = baseWidth - margin.left - margin.right;
+const height = baseHeight - margin.top - margin.bottom;
 
 // Helpers
 function getPartyColor(candidateData) {

@@ -275,6 +275,7 @@ export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, all
             <button onClick={() => setShowDetails(!showDetails)} id="detailButton">
               {showDetails ? "Less Details": "More Details"}
             </button>
+            
             <div id="historicalResult">
                 <h5 id="historicalTitle">Historical Result</h5>
                 <div className="toggle-container">
@@ -289,14 +290,17 @@ export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, all
                     </label>
                     <span className={`toggle-label-right ${seatOrVote === "vote" ? "active" : ""}`}>Vote</span>
                 </div>
-
-                {seatOrVote === "seat" ?
-                    <HistoricalSeats
-                        data={formattedHistoricalSeatData}
-                    /> :   
-                    <HistoricalVote
-                        data={voteByRegionOvertime[selectedRegion]}
-                    />}   
+                <div id="historicalChart">
+                    {seatOrVote === "seat" ?
+                        <HistoricalSeats
+                            data={formattedHistoricalSeatData}
+                        /> :   
+                        <HistoricalVote
+                            data={voteByRegionOvertime[selectedRegion]}
+                        />
+                    }   
+                </div>
+                
             </div>
             
         </>);

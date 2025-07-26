@@ -1,0 +1,11 @@
+@media (max-width: 1050px) {
+  #historicalChart {
+    max-width: 1000px;
+  }
+}
+
+@media (max-width: 375px) {
+  #historicalChart {
+    max-width: 375px;
+  }
+}

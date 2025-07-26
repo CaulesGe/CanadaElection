@@ -151,7 +151,7 @@ export const RegionSeatChart = ({ fixedYDomain, selectedRegionSeats, selectedReg
 
     function renderRegionPieChart(svg, fixedYDomain, selectedRegionSeats) {
         const width = 600;
-        const height = 360;
+        const height = 410;
         const radius = Math.min(width, height) / 2;
 
         const data = fixedYDomain
@@ -219,7 +219,6 @@ export const RegionSeatChart = ({ fixedYDomain, selectedRegionSeats, selectedReg
                 const emToPx = 11;
                 const dyOffset = (i - data.length / 2) * 0.6 * side * emToPx;
                 pos[1] += dyOffset;
-
                 return `translate(${pos})`;
             })
             .attr("dy", "0.35em")
@@ -227,7 +226,7 @@ export const RegionSeatChart = ({ fixedYDomain, selectedRegionSeats, selectedReg
                 const midAngle = (d.startAngle + d.endAngle) / 2;
                 return midAngle > Math.PI ? "end" : "start";
             })
-            .style("font-size", "11px")
+            .style("font-size", "14px")
             .text(d => `${d.data.party}: ${d.data.value}`);
 
 

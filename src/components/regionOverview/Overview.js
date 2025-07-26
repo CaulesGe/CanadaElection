@@ -246,8 +246,8 @@ export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, all
                 </div>
             </div>
             <div id="regionalView">
-                <div id="overviewChart">
-                    <div>
+                <div id="overviewChart" className="row">
+                    <div className="col-12 col-md-6">
                         <label className="chartLabel">Seats – {selectedRegion}</label><br/>
                         <RegionSeatChart 
                             fixedYDomain={fixedYDomain}
@@ -256,14 +256,13 @@ export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, all
                             chartType={chartType}
                         />
                     </div>
-                    <div>
+                    <div className="col-12 col-md-6"> 
                         <label className="chartLabel">Popular Vote – {selectedRegion}</label><br/>
                         <RegionVoteChart 
                             selectedRegionVote={selectedRegionVote}
                             chartType={chartType}
                         />
                     </div>
-                    
                 </div>
             </div>
             {showDetails &&

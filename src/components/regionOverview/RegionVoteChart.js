@@ -45,6 +45,23 @@ export const RegionVoteChart = ({selectedRegionVote, chartType}) => {
     useEffect(() => {    
         if (!selectedRegionVote ) return;
 
+        // Ensure tooltip exists
+        let tooltip = d3.select("#overviewTooltip");
+        if (tooltip.empty()) {
+            tooltip = d3.select("body")
+                .append("div")
+                .attr("id", "overviewTooltip")
+                .style("position", "absolute")
+                .style("z-index", 9999)
+                .style("background", "white")
+                .style("padding", "6px 10px")
+                .style("border", "1px solid #ccc")
+                .style("border-radius", "4px")
+                .style("box-shadow", "0 0 6px rgba(0,0,0,0.2)")
+                .style("pointer-events", "none")
+                .style("display", "none");
+        }
+
         let filteredPartyData = Object.values(selectedRegionVote)
             .filter(d => d.percentageOfVote > 1)
             .sort((a, b) => b.percentageOfVote - a.percentageOfVote)
@@ -121,33 +138,20 @@ export const RegionVoteChart = ({selectedRegionVote, chartType}) => {
         // EXIT
         bars.exit().remove();
 
-        // create tooltip
-        let tooltip = d3.select("#overviewTooltip");
-        if (tooltip.empty()) {
-        tooltip = d3.select("body")
-            .append("div")
-            .attr("class", "tooltip")
-            .attr("id", "overviewTooltip")
-            .style("position", "absolute")
-            .style("display", "none")
-            .style("pointer-events", "none");
-        }
-        
-
         // TOOLTIP — attach to real DOM elements, NOT the transition
         barsMerged.on("mouseover", function (event, d) {
             d3.select(this).attr("fill", "#808080"); // highlight the bar
-            tooltip.style('display', 'block')
-                .style('opacity', 1)
-                .style('left', event.pageX + 10 + 'px')
-                .style('top', event.pageY - 15 + 'px')
-                .html(`<div>
-                    ${d.numberOfVote}
-                </div>`);
-        })
+            d3.select(this).attr("fill", "#808080");
+            d3.select("#overviewTooltip")
+                .style("display", "block")
+                .style("opacity", 1)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 10) + "px")
+                .html(`<div>${d.numberOfVote}</div>`);
+                })
         .on("mouseout", function (event, d) {
             d3.select(this).attr("fill", getPartyColor(d.party));
-            tooltip.style("display", "none");
+            d3.select("#overviewTooltip").style("display", "none");
         });
         
         //labels
@@ -192,7 +196,7 @@ export const RegionVoteChart = ({selectedRegionVote, chartType}) => {
 
         const pie = d3.pie().value(d => d.value);
         const arc = d3.arc().innerRadius(0).outerRadius(radius);
-        const outerArc = d3.arc().innerRadius(radius * 1.01).outerRadius(radius * 1.01);
+
 
         const arcs = g.selectAll(".arc")
             .data(pie(data))
@@ -211,24 +215,15 @@ export const RegionVoteChart = ({selectedRegionVote, chartType}) => {
             });
 
         // Tooltip
-        let tooltip = d3.select("#overviewTooltip");
-        if (tooltip.empty()) {
-            tooltip = d3.select("body")
-                .append("div")
-                .attr("class", "tooltip")
-                .attr("id", "overviewTooltip")
-                .style("position", "absolute")
-                .style("display", "none")
-                .style("pointer-events", "none");
-        }
 
         arcs.select("path")
             .on("mouseover", function (event, d) {
                 d3.select(this).attr("stroke", "white").attr("stroke-width", 2);
+                const tooltip = d3.select("#overviewTooltip");
                 tooltip
                     .style("display", "block")
-                    .style("left", event.pageX + 10 + "px")
-                    .style("top", event.pageY - 10 + "px")
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 10) + 'px')
                     .html(`
                         <div>
                             <strong>${d.data.party}</strong>: ${d.data.value}% </br> 
@@ -237,6 +232,7 @@ export const RegionVoteChart = ({selectedRegionVote, chartType}) => {
             })
             .on("mouseout", function () {
                 d3.select(this).attr("stroke", null);
+                const tooltip = d3.select("#overviewTooltip");
                 tooltip.style("display", "none");
             });
 
@@ -244,7 +240,7 @@ export const RegionVoteChart = ({selectedRegionVote, chartType}) => {
 
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
+        <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
             <svg
                 ref={svgRef}
                 viewBox={`0 0 ${baseWidth} ${baseHeight}`}

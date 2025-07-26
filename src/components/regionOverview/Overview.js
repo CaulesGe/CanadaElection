@@ -246,21 +246,24 @@ export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, all
                 </div>
             </div>
             <div id="regionalView">
-                <div id="chartTitleRow">
-                    <h5>Seats – {selectedRegion}</h5>
-                    <h5>Popular Vote – {selectedRegion}</h5>
-                </div>
                 <div id="overviewChart">
-                    <RegionSeatChart 
-                        fixedYDomain={fixedYDomain}
-                        selectedRegion={selectedRegion}
-                        selectedRegionSeats={selectedRegionSeats}
-                        chartType={chartType}
-                    />
-                    <RegionVoteChart 
-                        selectedRegionVote={selectedRegionVote}
-                        chartType={chartType}
-                    />
+                    <div>
+                        <label className="chartLabel">Seats – {selectedRegion}</label><br/>
+                        <RegionSeatChart 
+                            fixedYDomain={fixedYDomain}
+                            selectedRegion={selectedRegion}
+                            selectedRegionSeats={selectedRegionSeats}
+                            chartType={chartType}
+                        />
+                    </div>
+                    <div>
+                        <label className="chartLabel">Popular Vote – {selectedRegion}</label><br/>
+                        <RegionVoteChart 
+                            selectedRegionVote={selectedRegionVote}
+                            chartType={chartType}
+                        />
+                    </div>
+                    
                 </div>
             </div>
             {showDetails &&

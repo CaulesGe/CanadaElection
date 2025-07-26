@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import "./RidingBarChart.css";
 
 const margin = { top: 70, right: 20, bottom: 180, left: 120 };
 const width = 600 - margin.left - margin.right;
@@ -161,13 +162,13 @@ export const RidingBarChart = ({ candidates }) => {
   }, [candidates]);
 
   return (
-    <div>
+    <div id="barChart">
       {candidates.length > 0 && (
-        <>
+        <div id="table">
           <h4>Province: {candidates[0]["Province"]}</h4>
           <h4>Riding: {candidates[0]["Electoral District Name"]}</h4>
           <h4>Code: {candidates[0]["Electoral District Number"]}</h4>
-        </>
+        </div>
       )}
       <svg ref={svgRef}></svg>
     </div>

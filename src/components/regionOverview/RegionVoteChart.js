@@ -3,8 +3,10 @@ import * as d3 from "d3";
 
 
 const margin = { top: 20, right: 20, bottom: 100, left: 100 };
-const width = 600 - margin.left - margin.right;
-const height = 550 - margin.top - margin.bottom;
+const baseWidth = 600;
+const baseHeight = 550;
+const width = baseWidth - margin.left - margin.right;
+const height = baseHeight - margin.top - margin.bottom;
 
 function getPartyColor(candidateData) {
     if (candidateData.includes("Liberal")) return "#D71920";
@@ -242,8 +244,13 @@ export const RegionVoteChart = ({selectedRegionVote, chartType}) => {
 
 
     return (
-        <>
-            <svg ref={svgRef}></svg>
-        </>
+        <div style={{ width: '100%', height: '100%' }}>
+            <svg
+                ref={svgRef}
+                viewBox={`0 0 ${baseWidth} ${baseHeight}`}
+                preserveAspectRatio="xMidYMid meet"
+                style={{ width: "100%", height: "auto" }}
+            />
+        </div>
     );
 }

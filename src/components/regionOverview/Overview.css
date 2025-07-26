@@ -105,12 +105,17 @@
 }
 
 #historicalResult {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   margin-top: 4%;
+  justify-content: center;
 }
 
 #historicalTitle {
   margin-top: 20px;
   font-weight: bold;
+  text-align: center;
 }
 
 /* toggle */
@@ -173,6 +178,9 @@ input:checked + .slider:before {
   font-weight: bold;
 }
 
+#historicalResult {
+  width: 100%;
+}
 
 /* Optional: make charts stack on small screens */
 @media (min-width: 768px) {

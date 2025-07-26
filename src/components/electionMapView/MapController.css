@@ -6,38 +6,39 @@
 }
 
 #ridingSearch {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 30px auto;
-    width: 400px;            /* ✅ fixed width */
-    max-width: 100%;         /* still responsive if screen is smaller */
-    position: relative;
-    z-index: 1000;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px auto;
+  width: 400px;            /* ✅ fixed width */
+  max-width: 100%;         /* still responsive if screen is smaller */
+  position: relative;
+  z-index: 1000;
+}
 
-  .custom-select__control {
-    width: 1000px;
-  }
-  
-  .custom-select__value-container {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.custom-select__control {
+  width: 1000px;
+}
 
-  #mapContainer {
-    width: 100%;
-    justify-content: center;  /* center horizontally */
-  }
+.custom-select__value-container {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  #mapLabel {
-    text-align: center;
-  }
+#mapContainer {
+  width: 100%;
+  justify-content: center;  /* center horizontally */
+}
 
-  #ridingBarChart {
-    margin-right: 5%;
-  }
+#mapLabel {
+  text-align: center;
+}
+
+#ridingBarChart {
+  justify-content: center;
+}
+
   
   /* ✅ Responsive mobile-specific changes */
 @media (max-width: 768px) {

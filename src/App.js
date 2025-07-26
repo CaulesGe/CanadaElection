@@ -146,14 +146,12 @@ function App() {
 
             <div id="overview">
               <Overview
-               
                 allResultsByDistrict={allResultsByDistrict}
                 percentageOfVoteByRegion={percentageOfVoteByRegion}
                 allPercentageOfVoteByRegion={allPercentageOfVoteByRegion}
                 numberOfVoteByRegion={numberOfVoteByRegion}
                 allNumberOfVoteByRegion={allNumberOfVoteByRegion}
                 selectedElection={selectedElection}
-
               />
             </div>
             <MapController

@@ -4,7 +4,7 @@ import { HistoricalVoteTable } from './HistoricalVoteTable';
 import './HistoricalSeats.css'
 
 const margin = { top: 40, right: 220, bottom: 50, left: 60 };
-const width = 1100 - margin.left - margin.right;
+const width = 1000 - margin.left - margin.right;
 const height = 400 - margin.top - margin.bottom;
 
 

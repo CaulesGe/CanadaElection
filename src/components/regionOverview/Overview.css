@@ -129,6 +129,10 @@
   text-align: center;
 }
 
+#historicalChart {
+  width: 100%;
+}
+
 /* toggle */
 .toggle-container {
   display: flex;
@@ -189,9 +193,7 @@ input:checked + .slider:before {
   font-weight: bold;
 }
 
-#historicalResult {
-  width: 100%;
-}
+
 
 /* Optional: make charts stack on small screens */
 @media (min-width: 768px) {

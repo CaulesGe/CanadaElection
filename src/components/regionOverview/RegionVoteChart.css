@@ -1,0 +1,5 @@
+@media (max-width: 400px) {
+    #regionVoteChart {
+        max-width: 400px;
+    }
+}

@@ -213,7 +213,7 @@ export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, all
     }
 
     return (
-        <>  
+        <div id="overview">  
             {/* <p className="description" id="overviewTitle">Overview of the election result</p>  */}
             <div id="federalOverview">
                 <FederalResult 
@@ -298,9 +298,7 @@ export const Overview = ({allResultsByDistrict, allPercentageOfVoteByRegion, all
                             data={voteByRegionOvertime[selectedRegion]}
                         />
                     }   
-                </div>
-                
+                </div>     
             </div>
-            
-        </>);
+        </div>);
 }

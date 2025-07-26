@@ -32,7 +32,7 @@ export const MapController = ({resultByRiding, resultByDistrict, selectedElectio
     }
 
     return (
-        <>
+        <div id='mapController'>
             <h3 id='ridingMapTitle'>Riding Map</h3>
             <div id="ridingSearch" >
                 <Select
@@ -80,5 +80,5 @@ export const MapController = ({resultByRiding, resultByDistrict, selectedElectio
                     candidates={selectedCandidates}
                 />
             </div>
-        </>);
+        </div>);
 }
